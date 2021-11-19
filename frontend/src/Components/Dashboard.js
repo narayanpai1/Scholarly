@@ -216,7 +216,7 @@ function Dashboard() {
         >
           Create a new Course
         </Button>
-        <CourseList enrolled={tabValue} />
+        <CourseList enrolled={tabValue === 1} />
       </div>
     </>
   );
