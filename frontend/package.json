@@ -1,5 +1,5 @@
 {
-  "name": "google-forms",
+  "name": "scholarly-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -38,7 +38,9 @@
     "client": "npm start",
     "server": "cd ../server && nodemon index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "prod": "concurrently \"npm run server\" \"npm run build\""
+    "prod": "concurrently \"npm run server\" \"npm run build\"",
+    "lint": "eslint src --ext js",
+    "lint-fix": "eslint . --ext js --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -59,6 +61,8 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^5.2.0"
+    "concurrently": "^5.2.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.27.1"
   }
 }

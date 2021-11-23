@@ -53,8 +53,8 @@ function UserView(props) {
               {!loading &&
                 Object.keys(formData).length !== 0 &&
                 Object.keys(response).length !== 0 && (
-                  <Responded formData={formData} responseData={response} />
-                )}
+                <Responded formData={formData} responseData={response} />
+              )}
             </Grid>
           </Grid>
 

@@ -89,23 +89,23 @@ function CourseCard(props) {
             user &&
             course.createdBy !== user._id &&
             user.enrolledCourses.includes(course._id) && (
-              <>
-                <Button color="primary" size="small" disabled>
+            <>
+              <Button color="primary" size="small" disabled>
                   Enrolled
-                </Button>
-                <Button size="small" href={'/course/' + course._id}>
+              </Button>
+              <Button size="small" href={'/course/' + course._id}>
                   View Course
-                </Button>
-              </>
-            )}
+              </Button>
+            </>
+          )}
           {course &&
             user &&
             course.createdBy !== user._id &&
             !user.enrolledCourses.includes(course._id) && (
-              <Button size="small" onClick={enrollCourse}>
+            <Button size="small" onClick={enrollCourse}>
                 Enroll
-              </Button>
-            )}
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Grid>

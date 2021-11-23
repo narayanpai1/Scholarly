@@ -180,11 +180,11 @@ function Responded(props) {
                               perQuestionData[i].correctOptions.includes(
                                 String.fromCharCode('A'.charCodeAt(0) + j),
                               ) && (
-                                <Box sx={{ color: 'green', fontSize: '13px' }}>
-                                  <CheckCircleIcon fontSize="small" sx={{ marginTop: '10px' }} />
+                              <Box sx={{ color: 'green', fontSize: '13px' }}>
+                                <CheckCircleIcon fontSize="small" sx={{ marginTop: '10px' }} />
                                   Expected Answer
-                                </Box>
-                              )}
+                              </Box>
+                            )}
                           </div>
 
                           <div style={{ display: 'flex' }}>
