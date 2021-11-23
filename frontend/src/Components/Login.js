@@ -45,6 +45,11 @@ const defaultHelpers = {
   firstName: '',
 };
 
+const profileTypeOptions = [
+  { value: 'student', label: 'Student' },
+  { value: 'teacher', label: 'Teacher' },
+];
+
 function LoginForm(props) {
   let history = useHistory();
 
@@ -135,11 +140,6 @@ function LoginForm(props) {
 function SignUpForm(props) {
   let history = useHistory();
 
-  const profileTypeOptions = [
-    { value: 'student', label: 'Student' },
-    { value: 'teacher', label: 'Teacher' },
-  ];
-
   let [helpers, setHelpers] = React.useState(defaultHelpers);
   let [profileType, setProfileType] = React.useState('student');
 
@@ -170,6 +170,7 @@ function SignUpForm(props) {
         email: data.get('email'),
         password: data.get('password'),
         name: data.get('firstName') + ' ' + data.get('lastName'),
+        isStudent: data.get('profileType') === 'student',
       })
       .then(() => {
         history.push('/home');
@@ -222,7 +223,7 @@ function SignUpForm(props) {
               select
               required
               fullWidth
-              label="Profile Type"
+              label="You are a"
               value={profileType}
               onChange={(e) => {
                 setProfileType(e.target.value);
@@ -283,23 +284,23 @@ function SignUpForm(props) {
   );
 }
 
-export default function SignInSide() {
-  const [loginForm, setLoginForm] = React.useState(true);
+export default function SignInSide(props) {
+  const [loginForm, setLoginForm] = React.useState(props.match.path.includes('login'));
+  const [oAuthData, setOAuthData] = React.useState(null);
+  let [profileType, setProfileType] = React.useState('student');
 
   let history = useHistory();
 
   const { from } = { from: { pathname: '/' } };
 
   const loginGoogle = (response) => {
-    console.log(response);
     auth.loginWithGoogle(response).then(
-      () => {
-        console.log(from.pathname);
-
-        if (from.pathname === '/login') {
+      (res) => {
+        console.log(res);
+        if (res.data && res.data.accessToken) {
           history.push('/home');
         } else {
-          history.push(from.pathname);
+          setOAuthData(res.data);
         }
       },
       (error) => {
@@ -310,6 +311,16 @@ export default function SignInSide() {
         console.log(resMessage);
       },
     );
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    return loginGoogle({
+      isStudent: data.get('profileType') === 'student',
+      profileObj: Object.assign({}, oAuthData),
+    });
   };
 
   const handleLoginFailure = () => {
@@ -356,36 +367,66 @@ export default function SignInSide() {
             }}
           >
             <img src="/Scholarly-logos.jpeg" width="23%" />
-
-            {loginForm ? (
+            {oAuthData && (
+              <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <h2> Scholarly </h2>
+                <TextField
+                  select
+                  required
+                  fullWidth
+                  label="You are a"
+                  value={profileType}
+                  onChange={(e) => {
+                    setProfileType(e.target.value);
+                  }}
+                  id="profileType"
+                >
+                  {profileTypeOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                  Start your journey!
+                </Button>
+              </Box>
+            )}
+            {!oAuthData && loginForm && (
               <LoginForm
                 handleLoginFailure={handleLoginFailure}
                 loginGoogle={loginGoogle}
                 setLoginForm={setLoginForm}
               />
-            ) : (
+            )}
+            {!oAuthData && !loginForm && (
               <SignUpForm
                 handleLoginFailure={handleLoginFailure}
                 loginGoogle={loginGoogle}
                 setLoginForm={setLoginForm}
               />
             )}
-            <div style={{ fontSize: '15px', color: 'grey' }}>or</div>
-            <GoogleLogin
-              clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-              render={(renderProps) => (
-                <GoogleButton
-                  onClick={renderProps.onClick}
-                  style={{ textAlign: 'center', alignSelf: 'center' }}
-                  label="Connect with Google"
+            {!oAuthData && (
+              <>
+                <div style={{ fontSize: '15px', color: 'grey' }}>or</div>
+                <GoogleLogin
+                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                  render={(renderProps) => (
+                    <GoogleButton
+                      onClick={renderProps.onClick}
+                      style={{ textAlign: 'center', alignSelf: 'center' }}
+                      label="Connect with Google"
+                    />
+                  )}
+                  buttonText="Login"
+                  onSuccess={loginGoogle}
+                  onFailure={handleLoginFailure}
+                  cookiePolicy={'single_host_origin'}
+                  responseType="code,token"
                 />
-              )}
-              buttonText="Login"
-              onSuccess={loginGoogle}
-              onFailure={handleLoginFailure}
-              cookiePolicy={'single_host_origin'}
-              responseType="code,token"
-            />
+              </>
+            )}
+
             <Copyright sx={{ mt: 5 }} />
           </Box>
         </Grid>

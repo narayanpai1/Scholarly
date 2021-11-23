@@ -6,6 +6,7 @@ const {
   editForm,
   submitResponse,
   getResponse,
+  getMyResponse,
 } = require('../services/FormService');
 
 router.route('/:formId').get(getFormById);
@@ -14,5 +15,6 @@ router.route('').post(createForm);
 
 router.route('/:formId').put(editForm);
 router.route('/getresponse/:formId').get(getResponse);
+router.route('/getmyresponse/:formId').get(getMyResponse);
 router.route('/:formId').delete(deleteForm);
 module.exports = router;

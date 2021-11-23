@@ -11,9 +11,11 @@ module.exports = {
         createdBy: req.user._id,
         name: req.body.name,
         description: req.body.description,
-        url: req.body.url,
       };
 
+      if (req.body.url != '') {
+        data.url = req.body.url;
+      }
       var newCourse = new CourseModel(data);
       await newCourse.save().then((docs) => {
         res.status(200).json(docs);

@@ -37,7 +37,7 @@ var authService = {
   login(data, fromGoogle) {
     let endPoint = fromGoogle ? 'googleLogin' : 'login';
     return axios.post(API_URL + endPoint, data).then((response) => {
-      if (response.data.accessToken) {
+      if (response.data && response.data.accessToken) {
         localStorage.setItem('userTicket', JSON.stringify(response.data.accessToken));
       }
       return response;
@@ -50,6 +50,10 @@ var authService = {
       email: res.profileObj.email,
       image: res.profileObj.imageUrl,
     };
+
+    if (res.isStudent !== undefined) {
+      data.isStudent = res.isStudent;
+    }
 
     return authService.login(data, true);
   },

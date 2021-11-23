@@ -14,6 +14,7 @@ import TextField from '@mui/material/TextField';
 import formService from '../../services/formService';
 import courseService from '../../services/courseService';
 import NavigBar from '../NavigBar';
+import auth from '../../services/authService';
 
 const useStyles = makeStyles((theme) => ({
   courseRoot: {
@@ -39,14 +40,19 @@ const useStyles = makeStyles((theme) => ({
 
 function CourseView(props) {
   let classes = useStyles();
+  let user = auth.getCurrentUser();
+  const [open, setOpen] = React.useState(false);
   const courseId = props.match.params.courseId;
   const [course, setCourse] = React.useState({});
-  const [open, setOpen] = React.useState(false);
 
   const [formTitle, setFormTitle] = React.useState('');
   const [formDescription, setFormDescription] = React.useState('');
 
   React.useEffect(() => {
+    if (!courseId) {
+      return;
+    }
+
     courseService.get(courseId).then(
       (course) => {
         setCourse(course);
@@ -60,7 +66,7 @@ function CourseView(props) {
         console.log(resMessage);
       },
     );
-  }, []);
+  }, [courseId]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -122,15 +128,17 @@ function CourseView(props) {
             <div className={classes.courseDescription}>{course.description}</div>
           </Grid>
         </Grid>
-        <Button
-          variant="contained"
-          className={classes.newFormButton}
-          sx={{ margin: '10px' }}
-          onClick={handleClickOpen}
-        >
-          Create a new test
-        </Button>
-        <Forms courseId={courseId} />
+        {user && user._id && course.createdBy === user._id && (
+          <Button
+            variant="contained"
+            className={classes.newFormButton}
+            sx={{ margin: '10px' }}
+            onClick={handleClickOpen}
+          >
+            Create a new test
+          </Button>
+        )}
+        <Forms course={course} />
         <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Create a new Test</DialogTitle>
           <DialogContent fullWidth>

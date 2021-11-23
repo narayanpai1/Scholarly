@@ -24,6 +24,15 @@ class formService extends baseAPIService {
         return response.data;
       });
   }
+
+  getMyResponse(formId) {
+    return axios
+      .get(this.url + '/getmyresponse/' + formId, { headers: authService.getAuthHeaders() })
+      .then((response) => {
+        // console.log(response.data);
+        return response.data;
+      });
+  }
 }
 
 export default new formService();

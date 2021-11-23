@@ -8,6 +8,7 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import OneForm from './OneForm';
 import CircularProgress from '@mui/material/CircularProgress';
+import auth from '../../services/authService';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -23,11 +24,17 @@ const useStyles = makeStyles(() => ({
 }));
 
 function Forms(props) {
+  let { course } = props;
   const classes = useStyles();
   const [forms, setForms] = React.useState([]);
   const [loadingForms, setLoadingForms] = React.useState(true);
+  const [courseLinkPrefix, setCourseLinkPrefix] = React.useState(null);
+  const [user, setUser] = React.useState(null);
+
   React.useEffect(() => {
-    formService.getAllFormsOfCourse(props.courseId).then(
+    if (!course) return;
+
+    formService.getAllFormsOfCourse(course._id).then(
       (forms) => {
         console.log(forms);
         setForms(forms);
@@ -42,7 +49,19 @@ function Forms(props) {
         console.log(resMessage);
       },
     );
+  }, [course]);
+
+  React.useEffect(() => {
+    setUser(auth.getCurrentUser());
   }, []);
+
+  React.useEffect(() => {
+    if (!user || !course) return;
+
+    if (course.createdBy === user._id) setCourseLinkPrefix('/form');
+    else setCourseLinkPrefix('/s');
+  }, [user, course]);
+
   console.log('forms ', forms);
   return (
     <div>
@@ -52,7 +71,7 @@ function Forms(props) {
         <Container className={classes.cardGrid} maxWidth="lg">
           <Grid container spacing={6}>
             {forms.map((form, i) => (
-              <OneForm formData={form} key={i} />
+              <OneForm courseLinkPrefix={courseLinkPrefix} formData={form} key={i} />
             ))}
           </Grid>
         </Container>

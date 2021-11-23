@@ -166,7 +166,7 @@ export default function LandingPage() {
                         color="primary"
                         className={classes.buttongg}
                         sx={{ margin: 1 }}
-                        onClick={loginClick}
+                        href="/signup"
                       >
                         Signup Now
                       </Button>

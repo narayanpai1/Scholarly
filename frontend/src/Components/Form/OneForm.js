@@ -7,6 +7,9 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
 import Moment from 'react-moment';
+import Button from '@mui/material/Button';
+
+import formService from '../../services/formService';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -22,19 +25,25 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function OneForm(props) {
+  let { formData, courseLinkPrefix } = props;
   const classes = useStyles();
-
-  const [form, setForm] = React.useState({});
+  const [formResponse, setFormResponse] = React.useState(null);
 
   React.useEffect(() => {
-    //console.log(props.formData)
-    setForm(props.formData);
-  }, [props.formData]);
+    if (!courseLinkPrefix || !formData) return;
+
+    if (courseLinkPrefix === '/s') {
+      //if I am not the course instructor
+      formService.getMyResponse(formData._id).then((res) => {
+        setFormResponse(res);
+      });
+    }
+  }, [courseLinkPrefix, formData]);
 
   return (
     <Grid item xs={12} sm={6} md={3}>
       <Card className={classes.root}>
-        <CardActionArea href={'/form/' + form._id}>
+        <CardActionArea href={courseLinkPrefix ? courseLinkPrefix + '/' + formData._id : ''}>
           <CardMedia
             className={classes.media}
             image="https://static.makeuseof.com/wp-content/uploads/2019/06/AutoGradingQuizResults-GoogleForms.jpg"
@@ -42,13 +51,30 @@ export default function OneForm(props) {
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
-              {form.name}
+              {formData.name}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              {form.description}
+              {formData.description}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              Opened: <Moment fromNow>{form.updatedAt}</Moment>
+              {courseLinkPrefix === '/form' && (
+                <>
+                  Last updated: <Moment fromNow>{formData.updatedAt}</Moment>
+                  <br />
+                </>
+              )}
+              <Button
+                size="small"
+                href={courseLinkPrefix ? courseLinkPrefix + '/' + formData._id : ''}
+              >
+                {courseLinkPrefix === '/form' && <>Manage Test</>}
+                {courseLinkPrefix === '/s' && formResponse && Object.keys(formResponse) !== 0 && (
+                  <>Review</>
+                )}
+                {courseLinkPrefix === '/s' && formResponse && Object.keys(formResponse) === 0 && (
+                  <> Attempt Now</>
+                )}
+              </Button>
             </Typography>
           </CardContent>
         </CardActionArea>

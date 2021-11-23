@@ -30,7 +30,8 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import CustomTabs from './util/CustomTabs';
 import NavigBar from '../Components/NavigBar';
-
+import TabPanel from './util/TabPanel';
+import auth from '../services/authService';
 const useStyles = makeStyles((theme) => ({
   newCourseButton: { float: 'right' },
 }));
@@ -39,6 +40,7 @@ function Dashboard() {
   let history = useHistory();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [user, setUser] = React.useState({});
   const [imageUploading, setImageUploading] = React.useState(false);
   const [tabValue, setTabValue] = React.useState(0);
   const [courseTitle, setCourseTitle] = React.useState('');
@@ -46,6 +48,10 @@ function Dashboard() {
   const [imageUrl, setImageUrl] = React.useState('');
   const [image, setImage] = React.useState(undefined);
   const [imageWarning, setImageWarning] = React.useState('');
+
+  React.useEffect(() => {
+    setUser(auth.getCurrentUser());
+  }, []);
 
   React.useEffect(() => {
     if (!image) {
@@ -104,7 +110,7 @@ function Dashboard() {
       url: imageUrl,
     };
 
-    if (data.name !== '' && imageWarning !== '' && !imageUploading) {
+    if (data.name !== '' && imageWarning === '' && !imageUploading) {
       courseService.add(data).then(
         (result) => {
           console.log(result);
@@ -139,12 +145,16 @@ function Dashboard() {
         }}
       >
         <h1>Dashboard</h1>
-        <h3>Hey there! Narayan</h3>
+        {Object.keys(user).length !== 0 && <h3>Hey there! {user.name}</h3>}
       </div>
       <CustomTabs
         value={tabValue}
         handleChange={handleTabChange}
-        tabs={['Explore Courses', 'Enrolled Courses', 'Manage Courses']}
+        tabs={
+          user.isStudent !== undefined && user.isStudent === false
+            ? ['Explore Courses', 'Enrolled Courses', 'Manage Courses']
+            : ['Explore Courses', 'Enrolled Courses']
+        }
       />
       <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Create a new Course</DialogTitle>
@@ -208,15 +218,17 @@ function Dashboard() {
         </DialogActions>
       </Dialog>
       <div style={{ marginTop: '10px' }}>
-        <Button
-          variant="contained"
-          className={classes.newCourseButton}
-          sx={{ margin: '10px' }}
-          onClick={handleClickOpen}
-        >
-          Create a new Course
-        </Button>
-        <CourseList enrolled={tabValue === 1} />
+        <TabPanel index={2} value={tabValue}>
+          <Button
+            variant="contained"
+            className={classes.newCourseButton}
+            sx={{ margin: '20px' }}
+            onClick={handleClickOpen}
+          >
+            Create a new Course
+          </Button>
+        </TabPanel>
+        <CourseList type={tabValue} />
       </div>
     </>
   );

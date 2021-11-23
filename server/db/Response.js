@@ -8,8 +8,12 @@ var ResponseSchema = new mongoose.Schema(
       ref: 'Form',
     },
 
-    user: {
-      type: String,
+    // for caching name
+    user: String,
+
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
 
     response: [

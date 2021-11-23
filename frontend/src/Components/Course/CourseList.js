@@ -25,35 +25,33 @@ const useStyles = makeStyles(() => ({
 
 function CourseList(props) {
   const classes = useStyles();
-  let { enrolled } = props;
+  let { type } = props;
   const [user, setUser] = React.useState({});
   const [courses, setCourses] = React.useState([]);
   const [loadingCourses, setLoadingCourses] = React.useState(true);
 
   React.useEffect(() => {
-    setUser(auth.getCurrentUser);
+    auth.get().then((res) => {
+      setUser(res);
+    });
   }, []);
 
   React.useEffect(() => {
-    if (user === undefined) {
-      //console.log("this shit is undefined");
-    } else {
-      console.log('getting courses');
-      courseService.getAll().then(
-        (courses) => {
-          setCourses(courses);
-          setLoadingCourses(false);
-        },
+    if (Object.keys(user).length === 0) return;
+    courseService.getAll().then(
+      (courses) => {
+        setCourses(courses);
+        setLoadingCourses(false);
+      },
 
-        (error) => {
-          const resMessage =
-            (error.response && error.response.data && error.response.data.message) ||
-            error.message ||
-            error.toString();
-          console.log(resMessage);
-        },
-      );
-    }
+      (error) => {
+        const resMessage =
+          (error.response && error.response.data && error.response.data.message) ||
+          error.message ||
+          error.toString();
+        console.log(resMessage);
+      },
+    );
   }, [user]);
 
   return (
@@ -64,7 +62,7 @@ function CourseList(props) {
         <Container className={classes.cardGrid} maxWidth="lg">
           <Grid container spacing={6}>
             {courses.map((course, i) => (
-              <CourseCard showIfEnrolled={enrolled} course={course} key={i} />
+              <CourseCard type={type} course={course} key={i} setUser={setUser} user={user} />
             ))}
           </Grid>
         </Container>

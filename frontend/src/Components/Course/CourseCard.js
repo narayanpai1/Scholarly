@@ -9,15 +9,9 @@ import Grid from '@mui/material/Grid';
 
 import auth from '../../services/authService';
 
-function CourseList(props) {
-  let { showIfEnrolled } = props;
-  const [enrolled, setEnrolled] = React.useState(false);
-  const [user, setUser] = React.useState(null);
-
-  React.useEffect(async () => {
-    let res = await auth.get();
-    setUser(res);
-  }, []);
+function CourseCard(props) {
+  let { type, course, user, setUser } = props;
+  const [showCourse, setShowCourse] = React.useState(false);
 
   React.useEffect(() => {
     if (!user) {
@@ -26,30 +20,34 @@ function CourseList(props) {
 
     console.log('Enrolled courses', user);
 
-    if (user.enrolledCourses.includes(props.course._id)) {
-      setEnrolled(true);
+    if (type === 1 && user.enrolledCourses.includes(course._id)) {
+      setShowCourse(true);
+    } else if (type === 0) {
+      setShowCourse(true);
+    } else if (type === 2 && course.createdBy === user._id) {
+      setShowCourse(true);
     } else {
-      setEnrolled(false);
+      setShowCourse(false);
     }
-  }, [user]);
+  }, [user, course, type]);
 
-  const enrollCourse = async () => {
+  const enrollCourse = () => {
     try {
-      let user_copy = user;
-      user_copy.enrolledCourses.push(props.course._id);
+      let user_copy = Object.assign({}, user);
+      user_copy.enrolledCourses.push(course._id);
       setUser(user_copy);
-      let res = await auth.edit(user_copy);
-      console.log('got the response', res);
+      auth.edit(user_copy).then((res) => {
+        console.log('got the response', res);
+      });
     } catch (err) {
       console.log(err);
     }
-    setEnrolled(true);
   };
 
-  return !showIfEnrolled || enrolled ? (
+  return showCourse ? (
     <Grid item xs={12} sm={6} md={3}>
       <Card sx={{ maxWidth: 345 }}>
-        <CardMedia component="img" alt="green iguana" height="140" image={props.course.url} />
+        <CardMedia component="img" alt="green iguana" height="140" image={course.url} />
         <CardContent>
           <Typography
             gutterBottom
@@ -63,7 +61,7 @@ function CourseList(props) {
               WebkitLineClamp: '1',
             }}
           >
-            {props.course.name}
+            {course.name}
           </Typography>
           <Typography
             variant="body2"
@@ -78,24 +76,36 @@ function CourseList(props) {
               minHeight: '3em',
             }}
           >
-            {props.course.description}
+            {course.description}
           </Typography>
         </CardContent>
         <CardActions>
-          {enrolled ? (
-            <>
-              <Button color="primary" size="small" disabled>
-                Enrolled
-              </Button>
-              <Button size="small" href={'/course/' + props.course._id}>
-                View Course
-              </Button>
-            </>
-          ) : (
-            <Button size="small" onClick={enrollCourse}>
-              Enroll
+          {course && user && course.createdBy === user._id && (
+            <Button size="small" href={'/course/' + course._id}>
+              Manage Course
             </Button>
           )}
+          {course &&
+            user &&
+            course.createdBy !== user._id &&
+            user.enrolledCourses.includes(course._id) && (
+              <>
+                <Button color="primary" size="small" disabled>
+                  Enrolled
+                </Button>
+                <Button size="small" href={'/course/' + course._id}>
+                  View Course
+                </Button>
+              </>
+            )}
+          {course &&
+            user &&
+            course.createdBy !== user._id &&
+            !user.enrolledCourses.includes(course._id) && (
+              <Button size="small" onClick={enrollCourse}>
+                Enroll
+              </Button>
+            )}
         </CardActions>
       </Card>
     </Grid>
@@ -104,4 +114,4 @@ function CourseList(props) {
   );
 }
 
-export default CourseList;
+export default CourseCard;

@@ -43,11 +43,14 @@ module.exports = {
     try {
       var result = await UserModel.findOne({ email: req.body.email }).lean();
       if (!result) {
+        if (req.body.isStudent === undefined) {
+          return res.status(200).json(req.body);
+        }
         var gData = {
           name: req.body.name,
           email: req.body.email,
           image: req.body.image,
-          student: req.body.student || true,
+          isStudent: req.body.isStudent,
         };
 
         var newUser = new UserModel(gData);
@@ -90,8 +93,8 @@ module.exports = {
               enrolledCourses: [],
             };
 
-            if (req.body.student) {
-              newUser.student = req.body.student;
+            if (req.body.isStudent !== undefined) {
+              newUser.isStudent = req.body.isStudent;
             }
 
             newUser = new UserModel(newUser);

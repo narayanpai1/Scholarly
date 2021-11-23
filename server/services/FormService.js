@@ -106,6 +106,7 @@ module.exports = {
       var data = {
         formId: req.body.formId,
         user: req.user.name,
+        userId: req.user._id,
         response: req.body.response,
       };
       console.log(data.formId);
@@ -130,11 +131,26 @@ module.exports = {
     try {
       var formId = req.params.formId;
 
+      await checkAuthorization(req);
+
       await ResponseModel.find({ formId: formId }).then(async (responses) => {
         res.status(200).json(responses);
       });
     } catch (error) {
       res.send(error.message);
     }
+  },
+
+  getMyResponse: async (req, res) => {
+    var formId = req.params.formId;
+    console.log('hey');
+    ResponseModel.findOne({ formId: formId, userId: req.user._id })
+      .then((response) => {
+        if (!response) response = {};
+        res.status(200).json(response);
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+      });
   },
 };
