@@ -20,11 +20,11 @@ function CourseCard(props) {
 
     console.log('Enrolled courses', user);
 
-    if (type === 1 && user.enrolledCourses.includes(course._id)) {
+    if (type === 1 && user.isStudent === true && user.enrolledCourses.includes(course._id)) {
       setShowCourse(true);
     } else if (type === 0) {
       setShowCourse(true);
-    } else if (type === 2 && course.createdBy === user._id) {
+    } else if (type === 1 && user.isStudent === false && course.createdBy === user._id) {
       setShowCourse(true);
     } else {
       setShowCourse(false);
@@ -87,19 +87,21 @@ function CourseCard(props) {
           )}
           {course &&
             user &&
+            user.isStudent === true &&
             course.createdBy !== user._id &&
             user.enrolledCourses.includes(course._id) && (
             <>
               <Button color="primary" size="small" disabled>
-                  Enrolled
+                Enrolled
               </Button>
               <Button size="small" href={'/course/' + course._id}>
-                  View Course
+                View Course
               </Button>
             </>
           )}
           {course &&
             user &&
+            user.isStudent === true &&
             course.createdBy !== user._id &&
             !user.enrolledCourses.includes(course._id) && (
             <Button size="small" onClick={enrollCourse}>

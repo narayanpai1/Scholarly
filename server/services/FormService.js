@@ -18,6 +18,8 @@ module.exports = {
         name: req.body.name,
         description: req.body.description,
         course: req.body.course,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
       };
 
       var newForm = new FormModel(data);

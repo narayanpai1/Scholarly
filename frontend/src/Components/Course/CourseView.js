@@ -15,6 +15,10 @@ import formService from '../../services/formService';
 import courseService from '../../services/courseService';
 import NavigBar from '../NavigBar';
 import auth from '../../services/authService';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+// import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
+import DateAdapter from '@mui/lab/AdapterMoment';
 
 const useStyles = makeStyles((theme) => ({
   courseRoot: {
@@ -47,6 +51,8 @@ function CourseView(props) {
 
   const [formTitle, setFormTitle] = React.useState('');
   const [formDescription, setFormDescription] = React.useState('');
+  const [formStartTime, setFormStartTime] = React.useState(new Date());
+  const [formEndTime, setFormEndTime] = React.useState(new Date());
 
   React.useEffect(() => {
     if (!courseId) {
@@ -82,11 +88,22 @@ function CourseView(props) {
     setFormDescription('');
   };
 
+  const handleFormStartTimeChange = (newValue) => {
+    console.log(newValue);
+    setFormStartTime(newValue);
+  };
+
+  const handleFormEndTimeChange = (newValue) => {
+    setFormEndTime(newValue);
+  };
+
   const createCourse = () => {
     var data = {
       name: formTitle,
       description: formDescription,
       course: props.match.params.courseId,
+      startTime: formStartTime.toJSON(),
+      endTime: formEndTime.toJSON(),
     };
 
     if (data.name !== '') {
@@ -166,6 +183,27 @@ function CourseView(props) {
                 setFormDescription(e.target.value);
               }}
             />
+            <br></br>
+            <LocalizationProvider dateAdapter={DateAdapter}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <MobileDateTimePicker
+                    label="Start Time(IST)"
+                    value={formStartTime}
+                    onChange={handleFormStartTimeChange}
+                    renderInput={(params) => <TextField {...params} margin="dense" fullWidth />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <MobileDateTimePicker
+                    label="End Time(IST)"
+                    value={formEndTime}
+                    onChange={handleFormEndTimeChange}
+                    renderInput={(params) => <TextField {...params} margin="dense" fullWidth />}
+                  />
+                </Grid>
+              </Grid>
+            </LocalizationProvider>
             <br></br>
           </DialogContent>
           <DialogActions>

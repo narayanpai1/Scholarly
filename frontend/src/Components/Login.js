@@ -54,9 +54,11 @@ function LoginForm(props) {
   let history = useHistory();
 
   let [helpers, setHelpers] = React.useState(defaultHelpers);
+  let [error, setError] = React.useState(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setError(null);
     const data = new FormData(event.currentTarget);
 
     let valid = true;
@@ -80,6 +82,9 @@ function LoginForm(props) {
       })
       .then(() => {
         history.push('/home');
+      })
+      .catch(() => {
+        setError('Incorrect Email or Password');
       });
   };
 
@@ -88,6 +93,7 @@ function LoginForm(props) {
       <Typography component="h1" variant="h5">
         Sign in
       </Typography>
+      <div style={{ color: 'red' }}>{error}</div>
       <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField
           margin="normal"
@@ -142,10 +148,13 @@ function SignUpForm(props) {
 
   let [helpers, setHelpers] = React.useState(defaultHelpers);
   let [profileType, setProfileType] = React.useState('student');
+  let [error, setError] = React.useState(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setError(null);
     const data = new FormData(event.currentTarget);
+    console.log(data.get('profileType'));
 
     let valid = true;
     let helpersTemp = Object.assign({}, defaultHelpers);
@@ -158,6 +167,7 @@ function SignUpForm(props) {
 
     if (!helpersTemp['password'] && data.get('password') !== data.get('password2')) {
       helpersTemp['password'] = 'Passwords do not match';
+      valid = false;
     }
 
     setHelpers(helpersTemp);
@@ -174,6 +184,10 @@ function SignUpForm(props) {
       })
       .then(() => {
         history.push('/home');
+      })
+      .catch((res) => {
+        if (res.response && res.response.data && res.response.data.message)
+          setError(res.response.data.message);
       });
   };
 
@@ -182,6 +196,7 @@ function SignUpForm(props) {
       <Typography component="h1" variant="h5">
         Sign up
       </Typography>
+      <div style={{ color: 'red' }}>{error}</div>
       <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -223,6 +238,7 @@ function SignUpForm(props) {
               select
               required
               fullWidth
+              name="profileType"
               label="You are a"
               value={profileType}
               onChange={(e) => {

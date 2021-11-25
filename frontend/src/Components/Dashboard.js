@@ -109,7 +109,7 @@ function Dashboard() {
       description: courseDescription,
       url: imageUrl,
     };
-
+    console.log(data.name, imageWarning, imageUploading);
     if (data.name !== '' && imageWarning === '' && !imageUploading) {
       courseService.add(data).then(
         (result) => {
@@ -151,8 +151,8 @@ function Dashboard() {
         value={tabValue}
         handleChange={handleTabChange}
         tabs={
-          user.isStudent !== undefined && user.isStudent === false
-            ? ['Explore Courses', 'Enrolled Courses', 'Manage Courses']
+          user.isStudent === false
+            ? ['All Courses', 'Manage Courses']
             : ['Explore Courses', 'Enrolled Courses']
         }
       />
@@ -202,8 +202,8 @@ function Dashboard() {
             type="file"
             fullWidth
             onChange={async (e) => {
+              setImageWarning('');
               await setImage(e.target.files[0]);
-              setImageWarning(false);
             }}
           />
           <br></br>
@@ -218,15 +218,17 @@ function Dashboard() {
         </DialogActions>
       </Dialog>
       <div style={{ marginTop: '10px' }}>
-        <TabPanel index={2} value={tabValue}>
-          <Button
-            variant="contained"
-            className={classes.newCourseButton}
-            sx={{ margin: '20px' }}
-            onClick={handleClickOpen}
-          >
-            Create a new Course
-          </Button>
+        <TabPanel index={1} value={tabValue}>
+          {user.isStudent === false && (
+            <Button
+              variant="contained"
+              className={classes.newCourseButton}
+              sx={{ margin: '20px' }}
+              onClick={handleClickOpen}
+            >
+              Create a new Course
+            </Button>
+          )}
         </TabPanel>
         <CourseList type={tabValue} />
       </div>

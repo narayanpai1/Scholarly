@@ -15,6 +15,10 @@ var FormSchema = new mongoose.Schema(
       default: '',
     },
 
+    startTime: Date,
+
+    endTime: Date,
+
     questions: [
       {
         open: { type: Boolean, default: false },

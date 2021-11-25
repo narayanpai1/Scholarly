@@ -6,21 +6,25 @@ const { JWT_KEY } = require('../config');
 module.exports = {
   login: async (req, res) => {
     console.log('heel');
+    console.log(req.body.email);
+    
+
     UserModel.find({
-      where: {
-        email: req.body.email,
-      },
+      email: req.body.email,
     }).then((user) => {
+      console.log(user);
       if (user.length < 1) {
         return res.status(401).json({
-          message: 'Auth failed',
+          message: 'Auth failed 1',
         });
       }
 
+      console.log(req.body.password, user[0].password);
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+        console.log(err);
         if (err) {
           return res.status(401).json({
-            message: 'Auth failed',
+            message: 'Auth failed 2',
           });
         }
         if (result) {
@@ -33,7 +37,7 @@ module.exports = {
           });
         }
         res.status(401).json({
-          message: 'Auth failed',
+          message: 'Auth failed 3',
         });
       });
     });
@@ -74,11 +78,12 @@ module.exports = {
   },
 
   signup: (req, res) => {
+    console.log(req.body);
     bcrypt.hash(req.body.password, 10, async (err, hash) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
-          error: err,
+          error: 'Internal Server Error',
         });
       } else {
         try {
@@ -113,7 +118,7 @@ module.exports = {
         } catch (err) {
           console.log('oooi', err);
           res.status(500).json({
-            error: err,
+            error: 'Internal Server Error',
           });
         }
       }

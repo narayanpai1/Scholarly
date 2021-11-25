@@ -60,6 +60,6 @@ app.post('/', upload.single('myfile'), async (req, res) => {
 
 app.use('/api', router);
 
-app.listen(process.env.PORT || 5000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log('\u{1F525}\u{1F680} app listen on port', 5000, '\u{1F525}\u{1F680}');
 });

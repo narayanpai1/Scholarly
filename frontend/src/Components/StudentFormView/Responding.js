@@ -22,6 +22,7 @@ import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
+import Moment from 'react-moment';
 import NavigBar from '../NavigBar';
 
 const useStyles = makeStyles((theme) => ({}));
@@ -31,6 +32,8 @@ function Responding(props) {
   let { formData } = props;
   const [responseData, setResponseData] = React.useState([]);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [timeRemaining, setTimeRemaining] = React.useState('');
+  const [sendingResponse, setSendingResponse] = React.useState(false);
 
   const handleRadioChange = (j, i) => {
     var optionId = j;
@@ -48,8 +51,52 @@ function Responding(props) {
 
   React.useEffect(() => {
     if (!formData) return;
-
+    console.log(formData);
     var responseDataTemp = [];
+
+    setInterval(async () => {
+      let dt1 = new Date();
+      let dt2 = new Date(formData.endTime);
+      console.log(dt2);
+
+      let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+      // let diff = 0;
+      if (diff < -5) {
+        setTimeRemaining('Time Over');
+        return;
+      }
+      if(diff<=0){
+        setTimeRemaining('');
+        await setSendingResponse(true);
+        console.log(sendingResponse);
+        submitResponse();
+        return;
+      }
+
+      console.log(diff);
+      let days = Math.floor(diff / (24 * 3600));
+      diff %= 24 * 3600;
+      let hours = Math.floor(diff / 3600);
+      diff %= 3600;
+      let mins = Math.floor(diff / 60);
+      diff %= 60;
+      let secs = Math.floor(diff);
+
+      let diffString = 'Time Remaining: ';
+      if (days) {
+        diffString += days + ' days ';
+      }
+      if (hours) {
+        diffString += hours + ' hours ';
+      }
+      if (mins) {
+        diffString += mins + ' mins ';
+      }
+      if (secs) {
+        diffString += secs + ' secs ';
+      }
+      setTimeRemaining(diffString);
+    }, 1000);
 
     formData.questions.forEach((question) => {
       responseDataTemp.push({
@@ -62,6 +109,7 @@ function Responding(props) {
   }, [formData]);
 
   function submitResponse() {
+    setSendingResponse(true);
     var submissionData = {
       formId: formData._id,
       response: responseData,
@@ -92,6 +140,20 @@ function Responding(props) {
 
   return !isSubmitted ? (
     <div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ margin: '10px 20px', padding: '2px 10px', backgroundColor: '#66ff33' }}>
+          {timeRemaining}
+        </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <div style={{ margin: '10px 20px', padding: '2px 10px', backgroundColor: '#66ff33' }}>
+          {sendingResponse===true && (
+            <>
+              Submitting your response
+            </>
+          )}
+        </div>
+      </div>
       <Grid>
         {formData.questions.map((ques, i) => (
           <div key={i}>

@@ -68,14 +68,7 @@ var authService = {
   },
 
   signUp(user) {
-    var data = {
-      name: user.email,
-      email: user.email,
-      password: user.password,
-      isStudent: user.isStudent,
-    };
-
-    return axios.post(API_URL + 'signup', data).then((response) => {
+    return axios.post(API_URL + 'signup', user).then((response) => {
       if (response.data.accessToken) {
         localStorage.setItem('userTicket', JSON.stringify(response.data.accessToken));
       }
@@ -90,6 +83,7 @@ var authService = {
   getCurrentUser() {
     let userTicket = localStorage.getItem('userTicket');
     if (!userTicket) return '';
+    console.log(jwtDecode(userTicket));
     return jwtDecode(userTicket);
   },
 
