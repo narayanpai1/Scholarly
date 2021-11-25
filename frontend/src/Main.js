@@ -12,7 +12,7 @@ import LandingPage from './Components/LandingPage';
 function Main() {
   return (
     <div>
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/login" component={Login} />

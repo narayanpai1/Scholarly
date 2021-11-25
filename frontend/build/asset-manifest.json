@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/Scholarly/static/css/main.4988ae00.chunk.css",
+    "main.js": "/Scholarly/static/js/main.f232a91e.chunk.js",
+    "main.js.map": "/Scholarly/static/js/main.f232a91e.chunk.js.map",
+    "runtime-main.js": "/Scholarly/static/js/runtime-main.7800a7ce.js",
+    "runtime-main.js.map": "/Scholarly/static/js/runtime-main.7800a7ce.js.map",
+    "static/js/2.2ab214b6.chunk.js": "/Scholarly/static/js/2.2ab214b6.chunk.js",
+    "static/js/2.2ab214b6.chunk.js.map": "/Scholarly/static/js/2.2ab214b6.chunk.js.map",
+    "index.html": "/Scholarly/index.html",
+    "static/css/main.4988ae00.chunk.css.map": "/Scholarly/static/css/main.4988ae00.chunk.css.map",
+    "static/js/2.2ab214b6.chunk.js.LICENSE.txt": "/Scholarly/static/js/2.2ab214b6.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.7800a7ce.js",
+    "static/js/2.2ab214b6.chunk.js",
+    "static/css/main.4988ae00.chunk.css",
+    "static/js/main.f232a91e.chunk.js"
+  ]
+}
