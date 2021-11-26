@@ -11,6 +11,10 @@ import Button from '@mui/material/Button';
 
 import formService from '../../services/formService';
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 const useStyles = makeStyles(() => ({
   root: {
     maxWidth: 345,
@@ -49,9 +53,12 @@ export default function OneForm(props) {
     if (Object.keys(formResponse).length !== 0) {
       setDisabled(false);
     } else {
-      let currDateTime = new Date();
-
-      if (currDateTime > formData.startTime && currDateTime < formData.endTime) {
+      let currDateTime = new Date(),
+        startTime = new Date(formData.startTime),
+        endTime = new Date(formData.endTime);
+      console.log(currDateTime, formData.startTime);
+      if (currDateTime > startTime && currDateTime < endTime) {
+        console.log('hey');
         setDisabled(false);
       } else {
         setDisabled(true);
@@ -70,17 +77,34 @@ export default function OneForm(props) {
         <CardActionArea>
           <CardMedia
             className={classes.media}
-            image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjW8BEA87TL1WHCVU9YGfRcFai8gU3OGQ2OlS_yD0wTqQAQ94rGwXuBxILE3KX1ERsNlo&usqp=CAU"
+            image={'/course-' + getRandomInt(5) + '.jpg'}
             title="Contemplative Reptile"
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {formData.name}
             </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
+            <Typography
+              variant="body2"
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: '2',
+                lineHeight: '1.5em',
+                minHeight: '3em',
+              }}
+              component="p"
+            >
               {formData.description}
             </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+              sx={{ textAlign: 'left', marginTop: '5px' }}
+            >
               {courseLinkPrefix === '/form' && (
                 <>
                   Last updated: <Moment fromNow>{formData.updatedAt}</Moment>
@@ -88,12 +112,15 @@ export default function OneForm(props) {
                 </>
               )}
               {formData.startTime && <>Starts at: {getDateString(formData.startTime)}</>}
+              <br />
               {formData.endTime && <> Ends at: {getDateString(formData.endTime)}</>}
+              <br />
 
               {disabled === false && (
                 <Button
                   size="small"
                   href={courseLinkPrefix ? courseLinkPrefix + '/' + formData._id : ''}
+                  sx={{ padding: 0, marginTop:1 }}
                 >
                   {courseLinkPrefix === '/form' && <>Manage Test</>}
                   {courseLinkPrefix === '/s' &&

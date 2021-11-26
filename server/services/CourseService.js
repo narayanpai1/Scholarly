@@ -59,27 +59,6 @@ module.exports = {
     }
   },
 
-  getEnrolledCourses: async (req, res) => {
-    try {
-      await UserModel.findOne({ _id: req.user._id }).then(async (user) => {
-        await CourseModel.find()
-          .where('_id')
-          .in(user.enrolledCourses)
-          .exec((err, records) => {
-            if (err) {
-              res.status(500).send(err);
-            }
-
-            console.log(records);
-
-            res.status(200).json(records);
-          });
-      });
-    } catch (err) {
-      return res.status(500).send(err);
-    }
-  },
-
   deleteCourse: async (req, res) => {
     try {
       var courseId = req.params.courseId;

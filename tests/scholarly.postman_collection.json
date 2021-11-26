@@ -1,0 +1,292 @@
+{
+	"info": {
+		"_postman_id": "a624197c-040c-42b6-9a38-8e7c98bac297",
+		"name": "E-Learning",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Log In",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login contains access token\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"accessToken\");",
+							"    var jsonData = pm.response.json();",
+							"    pm.collectionVariables.set(\"auth_token\", jsonData.accessToken);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"s1@gmail.com\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/user/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Gets all the courses\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.not.eql(0);",
+							"    pm.collectionVariables.set(\"courseId\", jsonData[0]._id);",
+							"});",
+							"",
+							"pm.test(\"Each course has name and description\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"description\");",
+							"    pm.expect(pm.response.text()).to.include(\"name\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/course",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"course"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all tests of a course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Gets all the tests of a course\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.not.eql(0);",
+							"    pm.collectionVariables.set(\"formId\", jsonData[0]._id);",
+							"});",
+							"",
+							"pm.test(\"Each test has name and description\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"description\");",
+							"    pm.expect(pm.response.text()).to.include(\"name\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/course/forms/{{courseId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"course",
+						"forms",
+						"{{courseId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a test",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"The test contains different questions\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.questions.length).to.not.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/form/{{formId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"form",
+						"{{formId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets all meeting of a course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Contains different meetings\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.not.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/meeting/getAllMeetings/{{courseId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"meeting",
+						"getAllMeetings",
+						"{{courseId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a single course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"The course has name and description\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"description\");",
+							"    pm.expect(pm.response.text()).to.include(\"name\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/course/{{courseId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"course",
+						"{{courseId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOGI2NWVhZTI2NTU3OGJjNWI4MjQyZiIsIm5hbWUiOiJOYXJheWFuIiwiZW1haWwiOiJuYXJheWFuc3BhaUBnbWFpbC5jb20iLCJpbWFnZSI6InlveW8iLCJpYXQiOjE2MzY2MjIyNjUsImV4cCI6MTYzNjcwODY2NX0.6lchr3Ne63xrrclS0qkZI4-hMPqpoMm40RZF5L-_z3E"
+		},
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000"
+		},
+		{
+			"key": "courseId",
+			"value": ""
+		},
+		{
+			"key": "formId",
+			"value": ""
+		}
+	]
+}

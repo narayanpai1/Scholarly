@@ -11,12 +11,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import auth from '../../services/authService';
 
 const useStyles = makeStyles(() => ({
-  root: {
-    maxWidth: 345,
-  },
-  media: {
-    height: 140,
-  },
   cardGrid: {
     paddingTop: 8,
     paddingBottom: 8,

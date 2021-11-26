@@ -37,7 +37,7 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'X-Requested-With');
   next();
 });
-
+app.use(cors());
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
@@ -65,6 +65,6 @@ app.post('/', upload.single('myfile'), async (req, res) => {
 
 app.use('/api', router);
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log('\u{1F525}\u{1F680} app listen on port', 5000, '\u{1F525}\u{1F680}');
 });

@@ -37,6 +37,7 @@ var authService = {
   login(data, fromGoogle) {
     let endPoint = fromGoogle ? 'googleLogin' : 'login';
     return axios.post(API_URL + endPoint, data).then((response) => {
+      console.log(response.data);
       if (response.data && response.data.accessToken) {
         localStorage.setItem('userTicket', JSON.stringify(response.data.accessToken));
       }

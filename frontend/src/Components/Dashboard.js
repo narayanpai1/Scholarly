@@ -48,6 +48,7 @@ function Dashboard() {
   const [imageUrl, setImageUrl] = React.useState('');
   const [image, setImage] = React.useState(undefined);
   const [imageWarning, setImageWarning] = React.useState('');
+  const [courseNameHelper, setCourseNameHelper] = React.useState(null);
 
   React.useEffect(() => {
     setUser(auth.getCurrentUser());
@@ -101,16 +102,22 @@ function Dashboard() {
     setCourseTitle('');
     setCourseDescription('');
     setImageUrl('');
+    setCourseNameHelper(null);
   };
 
   const createCourse = () => {
+    setCourseNameHelper(null);
     var data = {
       name: courseTitle,
       description: courseDescription,
       url: imageUrl,
     };
     console.log(data.name, imageWarning, imageUploading);
-    if (data.name !== '' && imageWarning === '' && !imageUploading) {
+    if(data.name===''){
+      setCourseNameHelper('Course Name is required');
+      return;
+    }
+    if (imageWarning === '' && !imageUploading) {
       courseService.add(data).then(
         (result) => {
           console.log(result);
@@ -137,15 +144,14 @@ function Dashboard() {
           // eslint-disable-next-line quotes
           backgroundColor: '#1976d2',
           color: 'white',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
           textAlign: 'left',
           padding: '20px',
           paddingBottom: '0px',
+          marginBottom:'0px'
         }}
       >
-        <h1>Dashboard</h1>
         {Object.keys(user).length !== 0 && <h3>Hey there! {user.name}</h3>}
+        <h1>Dashboard</h1>
       </div>
       <CustomTabs
         value={tabValue}
@@ -163,6 +169,7 @@ function Dashboard() {
             autoFocus
             margin="dense"
             id="name"
+            required
             label="Course Name"
             type="text"
             fullWidth
@@ -170,6 +177,8 @@ function Dashboard() {
             onChange={(e) => {
               setCourseTitle(e.target.value);
             }}
+            error={Boolean(courseNameHelper)}
+            helperText={courseNameHelper}
           />
           <br></br>
           <TextField

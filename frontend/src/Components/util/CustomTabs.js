@@ -18,34 +18,37 @@ export default function CustomTabs(props) {
   let { handleChange, value, tabs } = props;
 
   return (
-    <Tabs
-      className={classes.title}
-      value={value}
-      onChange={handleChange}
-      indicatorColor="primary"
-      textColor="primary"
-      centered
-      sx={{
-        '.MuiTabs-scroller': {
-          overflow: 'auto !important',
-        },
-        '.MuiTabs-flexContainer': {
-          justifyContent: 'flex-start',
-        },
-        backgroundColor: '#d9d9d9',
-      }}
-    >
-      {tabs.map((tab, i) => {
-        return (
-          <Tab
-            label={tab}
-            key={i}
-            style={{
-              textTransform: 'capitalize',
-            }}
-          />
-        );
-      })}
-    </Tabs>
+    <div>
+      <Tabs
+        className={classes.title}
+        value={value}
+        onChange={handleChange}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+        sx={{
+          '.MuiTabs-scroller': {
+            overflow: 'auto !important',
+          },
+          '.MuiTabs-flexContainer': {
+            justifyContent: 'flex-start',
+          },
+          backgroundColor: '#d9d9d9',
+        }}
+      >
+        {tabs.map((tab, i) => {
+          return (
+            <Tab
+              label={tab}
+              key={i}
+              style={{
+                textTransform: 'capitalize',
+                margin: 0,
+              }}
+            />
+          );
+        })}
+      </Tabs>
+    </div>
   );
 }

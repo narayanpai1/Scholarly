@@ -19,13 +19,36 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 // import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import DateAdapter from '@mui/lab/AdapterMoment';
+import { useHistory, Redirect } from 'react-router-dom';
+
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import RadioGroup from '@mui/material/RadioGroup';
+import Divider from '@mui/material/Divider';
+
+import FormLabel from '@mui/material/FormLabel';
+import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormHelperText from '@mui/material/FormHelperText';
+import Checkbox from '@mui/material/Checkbox';
+
+import CustomTabs from '../util/CustomTabs';
+import TabPanel from '../util/TabPanel';
+import meetingService from '../../services/meetingService';
+import Meetings from './Meetings';
+
 
 const useStyles = makeStyles((theme) => ({
-  courseRoot: {
-    margin: '3vw',
+  courseContentRoot: {
+    padding: '3vw',
   },
   coverSection: {
     backgroundColor: '#d9d9d9',
+    padding: '5px 2vw 0px 2vw',
   },
   coverSectionRight: {
     textAlign: 'left',
@@ -44,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 function CourseView(props) {
   let classes = useStyles();
+  let history = useHistory();
   let user = auth.getCurrentUser();
   const [open, setOpen] = React.useState(false);
   const courseId = props.match.params.courseId;
@@ -53,6 +77,17 @@ function CourseView(props) {
   const [formDescription, setFormDescription] = React.useState('');
   const [formStartTime, setFormStartTime] = React.useState(new Date());
   const [formEndTime, setFormEndTime] = React.useState(new Date());
+  const [formNameHelper, setFormNameHelper] = React.useState(null);
+  const [tabValue, setTabValue] = React.useState(0);
+  const [classTitle, setClassTitle] = React.useState('');
+  const [classRecord, setClassRecord] = React.useState(true);
+  const [classNameHelper, setClassNameHelper] = React.useState(null);
+
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
 
   React.useEffect(() => {
     if (!courseId) {
@@ -86,6 +121,14 @@ function CourseView(props) {
     handleClose();
     setFormTitle('');
     setFormDescription('');
+    setFormNameHelper(null);
+  };
+
+  const cancelAddMeeting = () => {
+    handleClose();
+    setClassTitle('');
+    setClassRecord(true);
+    setClassNameHelper(null);
   };
 
   const handleFormStartTimeChange = (newValue) => {
@@ -97,6 +140,34 @@ function CourseView(props) {
     setFormEndTime(newValue);
   };
 
+  const createMeeting = () => {
+    var data = {
+      name: classTitle,
+      course:course._id,
+      record: classRecord
+    };
+    setClassNameHelper(null);
+
+    if (data.name === '') {
+      setClassNameHelper('Class Name is mandatory');
+      return;
+    }
+
+    meetingService.add(data).then(
+      (result) => {
+        window.location.replace(result.link);
+      },
+
+      (error) => {
+        const resMessage =
+          (error.response && error.response.data && error.response.data.message) ||
+          error.message ||
+          error.toString();
+        console.log(resMessage);
+      },
+    );
+  };
+
   const createCourse = () => {
     var data = {
       name: formTitle,
@@ -105,25 +176,26 @@ function CourseView(props) {
       startTime: formStartTime.toJSON(),
       endTime: formEndTime.toJSON(),
     };
+    setFormNameHelper(null);
 
-    if (data.name !== '') {
-      formService.add(data).then(
-        (result) => {
-          console.log(result);
-          setOpen(false);
-          window.location.reload(false);
-          // history.push('/form/' + result._id);
-        },
-
-        (error) => {
-          const resMessage =
-            (error.response && error.response.data && error.response.data.message) ||
-            error.message ||
-            error.toString();
-          console.log(resMessage);
-        },
-      );
+    if (data.name === ''){
+      setFormNameHelper('Test Name is mandatory');
+      return;
     }
+    formService.add(data).then(
+      (result) => {
+        console.log(result);
+        history.push('/form/' + result._id);
+      },
+
+      (error) => {
+        const resMessage =
+              (error.response && error.response.data && error.response.data.message) ||
+              error.message ||
+              error.toString();
+        console.log(resMessage);
+      },
+    );
   };
 
   return (
@@ -143,78 +215,136 @@ function CourseView(props) {
           >
             <div className={classes.courseHeading}>{course.name}</div>
             <div className={classes.courseDescription}>{course.description}</div>
+            <CustomTabs
+              value={tabValue}
+              handleChange={handleTabChange}
+              tabs={['Tests', 'Classes']}
+            />
           </Grid>
         </Grid>
-        {user && user._id && course.createdBy === user._id && (
-          <Button
-            variant="contained"
-            className={classes.newFormButton}
-            sx={{ margin: '10px' }}
-            onClick={handleClickOpen}
-          >
-            Create a new test
-          </Button>
-        )}
-        <Forms course={course} />
-        <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Create a new Test</DialogTitle>
-          <DialogContent fullWidth>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Test Name"
-              type="text"
-              fullWidth
-              value={formTitle}
-              onChange={(e) => {
-                setFormTitle(e.target.value);
-              }}
-            />
-            <br></br>
-            <TextField
-              margin="dense"
-              id="description"
-              label="Test description"
-              type="text"
-              fullWidth
-              value={formDescription}
-              onChange={(e) => {
-                setFormDescription(e.target.value);
-              }}
-            />
-            <br></br>
-            <LocalizationProvider dateAdapter={DateAdapter}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <MobileDateTimePicker
-                    label="Start Time(IST)"
-                    value={formStartTime}
-                    onChange={handleFormStartTimeChange}
-                    renderInput={(params) => <TextField {...params} margin="dense" fullWidth />}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <MobileDateTimePicker
-                    label="End Time(IST)"
-                    value={formEndTime}
-                    onChange={handleFormEndTimeChange}
-                    renderInput={(params) => <TextField {...params} margin="dense" fullWidth />}
-                  />
-                </Grid>
-              </Grid>
-            </LocalizationProvider>
-            <br></br>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={cancelAddForm} color="primary">
-              Cancel
+        <div className={classes.courseContentRoot}>
+          {user && user._id && course.createdBy === user._id && (
+            <Button
+              variant="contained"
+              className={classes.newFormButton}
+              sx={{ margin: '10px' }}
+              onClick={handleClickOpen}
+            >
+              {tabValue === 0 ? <>Create a New test</> : <>Create a New Class</>}
             </Button>
-            <Button onClick={createCourse} color="primary">
-              Create
-            </Button>
-          </DialogActions>
-        </Dialog>
+          )}
+          <TabPanel index={0} value={tabValue}>
+            <Forms course={course} />
+          </TabPanel>
+          <TabPanel index={1} value={tabValue}>
+            <Meetings course={course} />
+          </TabPanel>
+          <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Create a new Test</DialogTitle>
+            <TabPanel index={0} value={tabValue}>
+              <DialogContent fullWidth>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  required
+                  label="Test Name"
+                  type="text"
+                  fullWidth
+                  value={formTitle}
+                  onChange={(e) => {
+                    setFormTitle(e.target.value);
+                  }}
+                  error={Boolean(formNameHelper)}
+                  helperText={formNameHelper}
+                />
+                <br></br>
+                <TextField
+                  margin="dense"
+                  id="description"
+                  label="Test description"
+                  type="text"
+                  fullWidth
+                  value={formDescription}
+                  onChange={(e) => {
+                    setFormDescription(e.target.value);
+                  }}
+                />
+                <br></br>
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <MobileDateTimePicker
+                        label="Start Time(IST)"
+                        value={formStartTime}
+                        onChange={handleFormStartTimeChange}
+                        renderInput={(params) => <TextField {...params} margin="dense" fullWidth />}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <MobileDateTimePicker
+                        label="End Time(IST)"
+                        value={formEndTime}
+                        onChange={handleFormEndTimeChange}
+                        renderInput={(params) => <TextField {...params} margin="dense" fullWidth />}
+                      />
+                    </Grid>
+                  </Grid>
+                </LocalizationProvider>
+                <br></br>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={cancelAddForm} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={createCourse} color="primary">
+                  Create
+                </Button>
+              </DialogActions>
+            </TabPanel>
+
+            <TabPanel index={1} value={tabValue}>
+              <DialogContent fullWidth>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  required
+                  label="Class Topic"
+                  type="text"
+                  fullWidth
+                  value={classTitle}
+                  onChange={(e) => {
+                    setClassTitle(e.target.value);
+                  }}
+                  error={Boolean(classNameHelper)}
+                  helperText={classNameHelper}
+                />
+                <br></br>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={classRecord}
+                      onChange={() => {
+                        setClassRecord(!classRecord);
+                      }}
+                    />
+                  }
+                  label={'Record the class'}
+                />
+                <br></br>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={cancelAddMeeting} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={createMeeting} color="primary">
+                  Create
+                </Button>
+              </DialogActions>
+            </TabPanel>
+          </Dialog>
+        </div>
       </div>
     </>
   );

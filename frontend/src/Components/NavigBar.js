@@ -19,8 +19,6 @@ import { useHistory } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 
-const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -46,28 +44,14 @@ const useStyles = makeStyles((theme) => ({
 function Dashboard(props) {
   let history = useHistory();
   const isAuthenticated = auth.isAuthenticated();
-  let options = [{ text: 'All Courses' }, { text: 'My Courses' }];
   const classes = useStyles();
   const [moreAnchorEl, setMoreAnchorEl] = React.useState(null);
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
   const [user, setUser] = React.useState({});
 
   React.useEffect(() => {
     setUser(auth.getCurrentUser());
   }, []);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
 
   const isMobileMenuOpen = Boolean(moreAnchorEl);
 
@@ -113,29 +97,11 @@ function Dashboard(props) {
       <CssBaseline />
       <AppBar color="primary" position="static" sx={{ borderBottom: 'white solid 1px' }}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ display: { xs: 'none', sm: 'contents' } }}>
+          <Box sx={{ display: { xs: 'contents'} }}>
             <Logo />
           </Box>
           <div className={classes.grow} />
-          {/* {isAuthenticated && window.location.pathname === '/home' && (
-            <div className={classes.sectionDesktop}>
-              <Button color="inherit" sx={classes.navigButton}>
-                All Courses
-              </Button>
-              <Button color="inherit" sx={classes.navigButton}>
-                My Courses
-              </Button>
-            </div>
-          )} */}
+          
           {isAuthenticated && (
             <IconButton
               edge="end"
@@ -154,12 +120,6 @@ function Dashboard(props) {
           )}
         </Toolbar>
       </AppBar>
-      <DrawerBar
-        drawerWidth={drawerWidth}
-        options={options}
-        open={mobileOpen}
-        handleDrawerToggle={handleDrawerToggle}
-      />
       {renderMobileMenu}
     </Box>
   );

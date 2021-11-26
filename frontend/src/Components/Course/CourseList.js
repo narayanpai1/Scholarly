@@ -37,7 +37,8 @@ function CourseList(props) {
   }, []);
 
   React.useEffect(() => {
-    if (Object.keys(user).length === 0) return;
+    console.log(user);
+    if (!user || (Object.keys(user).length === 0) )return;
     courseService.getAll().then(
       (courses) => {
         setCourses(courses);

@@ -14,6 +14,12 @@ async function checkAuthorization(req) {
 module.exports = {
   createForm: async (req, res) => {
     try {
+      let course = await CourseModel.findOne({ _id: req.body.course });
+
+      if (course.createdBy !== req.user._id) {
+        throw 'Not authorized';
+      }
+
       var data = {
         name: req.body.name,
         description: req.body.description,
@@ -32,7 +38,7 @@ module.exports = {
         res.status(200).json(docs);
       });
     } catch (error) {
-      res.send(error);
+      res.status(401).send(error);
     }
   },
 
@@ -113,18 +119,15 @@ module.exports = {
       };
       console.log(data.formId);
       console.log(data.userId);
+      console.log(data);
+      var newResponse = new ResponseModel(data);
+      // console.log(newResponse);
 
-      if (data.response.length > 0) {
-        var newResponse = new ResponseModel(data);
-        // console.log(newResponse);
-
-        await newResponse.save().then((docs) => {
-          res.status(200).json(docs);
-        });
-      } else {
-        res.status(400).send('FIll atleast one field, MF!');
-      }
+      await newResponse.save().then((docs) => {
+        res.status(200).json(docs);
+      });
     } catch (error) {
+      console.log(error);
       res.send(error);
     }
   },

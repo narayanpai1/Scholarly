@@ -79,7 +79,7 @@ function CourseCard(props) {
             {course.description}
           </Typography>
         </CardContent>
-        <CardActions>
+        <CardActions sx={{textAlign:'left'}}>
           {course && user && course.createdBy === user._id && (
             <Button size="small" href={'/course/' + course._id}>
               Manage Course

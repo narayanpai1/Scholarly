@@ -24,6 +24,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
 import Moment from 'react-moment';
 import NavigBar from '../NavigBar';
+import Snackbar from '@mui/material/Snackbar';
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -33,7 +34,8 @@ function Responding(props) {
   const [responseData, setResponseData] = React.useState([]);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [timeRemaining, setTimeRemaining] = React.useState('');
-  const [sendingResponse, setSendingResponse] = React.useState(false);
+  const [sendingResponse, setSendingResponse] = React.useState(true);
+  const [timedOut, setTimedOut] = React.useState(false);
 
   const handleRadioChange = (j, i) => {
     var optionId = j;
@@ -54,7 +56,7 @@ function Responding(props) {
     console.log(formData);
     var responseDataTemp = [];
 
-    setInterval(async () => {
+    var timeRefresh = setInterval(async () => {
       let dt1 = new Date();
       let dt2 = new Date(formData.endTime);
       console.log(dt2);
@@ -63,13 +65,13 @@ function Responding(props) {
       // let diff = 0;
       if (diff < -5) {
         setTimeRemaining('Time Over');
+        setTimedOut(true);
         return;
       }
       if(diff<=0){
         setTimeRemaining('');
         await setSendingResponse(true);
-        console.log(sendingResponse);
-        submitResponse();
+        clearInterval(timeRefresh);
         return;
       }
 
@@ -110,12 +112,13 @@ function Responding(props) {
 
   function submitResponse() {
     setSendingResponse(true);
+    console.log(responseData);
     var submissionData = {
       formId: formData._id,
       response: responseData,
     };
     console.log(submissionData);
-
+    console.log('inside submit');
     formService.submitResponse(submissionData).then(
       (data2) => {
         setIsSubmitted(true);
@@ -131,6 +134,11 @@ function Responding(props) {
     );
   }
 
+  React.useEffect(() =>{
+    if(sendingResponse === true);
+    // submitResponse();
+  },[sendingResponse]);
+
   function isMarkedOption(i, optionId) {
     if (responseData[i] && responseData[i].optionId.includes(optionId)) {
       return true;
@@ -138,22 +146,29 @@ function Responding(props) {
     return false;
   }
 
-  return !isSubmitted ? (
+  function reload() {
+    location.reload();
+  }
+  return !isSubmitted && !timedOut ? (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <div style={{ margin: '10px 20px', padding: '2px 10px', backgroundColor: '#66ff33' }}>
-          {timeRemaining}
+      {timeRemaining !== '' && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ margin: '10px 20px', padding: '2px 10px', backgroundColor: '#66ff33' }}>
+            {timeRemaining}
+          </div>
         </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-        <div style={{ margin: '10px 20px', padding: '2px 10px', backgroundColor: '#66ff33' }}>
-          {sendingResponse===true && (
-            <>
-              Submitting your response
-            </>
-          )}
-        </div>
-      </div>
+      )}
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={sendingResponse}
+        message="Submitting your response..."
+        sx={{
+          '.MuiSnackbarContent-root': {
+            backgroundColor: 'green',
+            fontSize: '18px',
+          },
+        }}
+      />
       <Grid>
         {formData.questions.map((ques, i) => (
           <div key={i}>
@@ -183,6 +198,18 @@ function Responding(props) {
                   ) : (
                     ''
                   )}
+
+                  <div
+                    style={{
+                      color: '#666666',
+                      fontSize: '12px',
+                      marginLeft: '25px',
+                      textAlign: 'left',
+                    }}
+                  >
+                        Marks: {ques.marks}
+
+                  </div>
                   <div>
                     <FormGroup
                       onChange={(e) => {
@@ -234,9 +261,19 @@ function Responding(props) {
     </div>
   ) : (
     <div>
-      <Typography variant="body1">Form submitted</Typography>
-      <Typography variant="body2">Thanks for submiting form</Typography>
-      <Button href="/login">Go to Dashboard</Button>
+      {isSubmitted && (
+        <>
+          <Typography variant="body1">Answers submitted</Typography>
+          <Typography variant="body2">Thanks for submiting the test</Typography>
+          <Button onClick={reload}>Review Submission</Button>
+        </>
+      )}
+      {timedOut && (
+        <>
+          <Typography variant="body1">The submission time is over :\</Typography>
+          <Button href="/home">Go to Dashboard</Button>
+        </>
+      )}
     </div>
   );
 }

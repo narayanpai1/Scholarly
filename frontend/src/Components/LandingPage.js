@@ -139,7 +139,6 @@ export default function LandingPage() {
       <div>
         <main style={{ textAlign: 'start' }}>
           <div>
-            <br></br>
             <Paper className={classes.mainFeaturedPost}>
               {/* Increase the priority of the hero background image */}
               {
@@ -151,8 +150,12 @@ export default function LandingPage() {
               }
               <div className={classes.overlay} />
               <Grid container>
-                <Grid item md={6}>
+                <Grid item sm={2}>
+                  <img style={{ width: '100%' }} src="/Scholarly-logos_transparent.png" />
+                </Grid>
+                <Grid item sm={6}>
                   <div className={classes.mainFeaturedPostContent}>
+                    <br />
                     <Typography component="h1" variant="h3" color="inherit" gutterBottom>
                       Scholarly
                     </Typography>
@@ -186,9 +189,8 @@ export default function LandingPage() {
             </Paper>
             <br></br>
             <br></br>
-            <br></br>
 
-            <div>
+            <div style={{ margin: '0px 14px' }}>
               <Grid container spacing={4}>
                 <Grid item xs={12} md={6}>
                   <CardActionArea component="a" href="/">
@@ -199,12 +201,12 @@ export default function LandingPage() {
                             Take Class Tests with Ease
                           </Typography>
                           <Typography variant="subtitle1" style={{ color: 'teal' }}>
-                            Style
+                            Organize!
                           </Typography>
                           <Typography variant="subtitle1" paragraph>
-                            Conduct or attempt class tests right from your device!
+                            Conduct or attempt class tests right from your device.
                             <br />
-                            With automatic grading and online submissions, conducting a test have
+                            With automatic grading and online submissions, conducting a test has
                             never been easier.
                           </Typography>
                         </CardContent>
@@ -212,7 +214,7 @@ export default function LandingPage() {
                       <Hidden xsDown>
                         <CardMedia
                           className={classes.cardMedia}
-                          image="https://images.pexels.com/photos/4823233/pexels-photo-4823233.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                          image="/test.jpg"
                           title=""
                         />
                       </Hidden>
@@ -225,23 +227,23 @@ export default function LandingPage() {
                       <div className={classes.cardDetails}>
                         <CardContent>
                           <Typography component="h2" variant="h5">
-                            Take Class Tests with Ease
+                            Conduct Virtual Classes for Free!
                           </Typography>
                           <Typography variant="subtitle1" style={{ color: 'teal' }}>
-                            organize
+                            Interact!
                           </Typography>
                           <Typography variant="subtitle1" paragraph>
-                            Conduct or attempt class tests right from your device!
+                            Getting virtual is the new trend.
                             <br />
-                            With automatic grading and online submissions, conducting a test have
-                            never been easier.
+                            With a feature packed meeting room tailor-made for education, even
+                            learning and interacting can now be virtual.
                           </Typography>
                         </CardContent>
                       </div>
                       <Hidden xsDown>
                         <CardMedia
                           className={classes.cardMedia}
-                          image="https://images.pexels.com/photos/4823233/pexels-photo-4823233.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                          image="/meeting.jpg"
                           title=""
                         />
                       </Hidden>
@@ -250,10 +252,6 @@ export default function LandingPage() {
                 </Grid>
               </Grid>
             </div>
-
-            <br></br>
-            <br></br>
-            <br></br>
             <br></br>
           </div>
         </main>
@@ -266,7 +264,7 @@ export default function LandingPage() {
             An Open source learning platform
             <br />
             No Copyright issue. This project is{' '}
-            <Link color="inherit" href="">
+            <Link color="inherit" href="https://github.com/narayanpai1/Scholarly">
               open source
             </Link>
             {'. '}

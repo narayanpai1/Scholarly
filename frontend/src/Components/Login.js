@@ -22,8 +22,8 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="https://scholarly-app-74aa37wu.netlify.app/">
+        Scholarly
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -363,7 +363,7 @@ export default function SignInSide(props) {
           sm={4}
           md={6}
           sx={{
-            backgroundImage: 'url(/login-cover)',
+            backgroundImage: 'url(/login-cover.jpg)',
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -395,6 +395,7 @@ export default function SignInSide(props) {
                   onChange={(e) => {
                     setProfileType(e.target.value);
                   }}
+                  name="profileType"
                   id="profileType"
                 >
                   {profileTypeOptions.map((option) => (
@@ -430,6 +431,7 @@ export default function SignInSide(props) {
                   render={(renderProps) => (
                     <GoogleButton
                       onClick={renderProps.onClick}
+                      disabled={renderProps.disabled}
                       style={{ textAlign: 'center', alignSelf: 'center' }}
                       label="Connect with Google"
                     />

@@ -34,7 +34,7 @@ module.exports = {
           });
           return res.status(200).json({
             message: 'Auth successful',
-            token: token,
+            accessToken: token,
           });
         }
         res.status(401).json({
