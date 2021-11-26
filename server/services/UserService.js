@@ -28,7 +28,8 @@ module.exports = {
           });
         }
         if (result) {
-          const token = jwt.sign(user[0], JWT_KEY, {
+          console.log(JWT_KEY);
+          const token = jwt.sign(user[0].toJSON(), JWT_KEY, {
             expiresIn: '24h',
           });
           return res.status(200).json({
