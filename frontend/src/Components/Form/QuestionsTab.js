@@ -34,10 +34,10 @@ import formService from '../../services/formService';
  * It lets the course instructor add/see different questions in the test
  */
 function QuestionsTab(props) {
+  let {formData, setFormData} = props;
   const [questions, setQuestions] = React.useState([]);
   const [openUploadImagePop, setOpenUploadImagePop] = React.useState(false);
   const [imageContextData, setImageContextData] = React.useState({ question: null, option: null });
-  const [formData, setFormData] = React.useState({});
   const [loadingFormData, setLoadingFormData] = React.useState(true);
   const [toastMessage, setToastMessage] = React.useState(null);
 
@@ -51,8 +51,8 @@ function QuestionsTab(props) {
 
   // If there are no questions, create a new question as a template
   React.useEffect(() => {
-    if (props.formData.questions !== undefined) {
-      if (props.formData.questions.length === 0) {
+    if (formData.questions !== undefined) {
+      if (formData.questions.length === 0) {
         setQuestions([
           {
             questionText: 'Question',
@@ -62,12 +62,11 @@ function QuestionsTab(props) {
           },
         ]);
       } else {
-        setQuestions(props.formData.questions);
+        setQuestions(formData.questions);
       }
       setLoadingFormData(false);
     }
-    setFormData(props.formData);
-  }, [props.formData]);
+  }, [formData]);
 
   // Validate and save questions using formService
   function saveQuestions() {
@@ -103,12 +102,12 @@ function QuestionsTab(props) {
   
     formService.edit(formData._id, data).then(
       (result) => {
-        console.log(result);
         setQuestions(result.questions);
         setToastMessage('Test updated successfully');
         setTimeout(() => {
           setToastMessage(null);
         }, 3000);
+        setFormData(result);
       },
       (error) => {
         const resMessage =
@@ -217,7 +216,6 @@ function QuestionsTab(props) {
 
   function handleQuestionMarks(mark, questionIndex) {
     var optionsOfQuestion = [...questions];
-    console.log(mark, questionIndex);
     optionsOfQuestion[questionIndex].marks = mark;
     setQuestions(optionsOfQuestion);
   }
@@ -267,8 +265,6 @@ function QuestionsTab(props) {
         optionText: 'Option ' + (optionsOfQuestion[i].options.length + 1),
         isCorrect: false,
       });
-    } else {
-      console.log('Max  5 options ');
     }
     setQuestions(optionsOfQuestion);
   }
@@ -278,7 +274,6 @@ function QuestionsTab(props) {
     if (optionsOfQuestion[i].options.length > 1) {
       optionsOfQuestion[i].options.splice(j, 1);
       setQuestions(optionsOfQuestion);
-      console.log(i + '__' + j);
     }
   }
 
@@ -659,7 +654,18 @@ function QuestionsTab(props) {
       />
       <Grid container direction="column" justify="center" alignItems="center">
         {loadingFormData ? <CircularProgress /> : ''}
-
+        {questions && questions.length && (
+          <div
+            style={{
+              margin: '10px 20px',
+              padding: '2px 10px',
+              borderRadius: '4px',
+              backgroundColor: '#d9d9d9',
+            }}
+          >
+            Maximum Marks: {questions.reduce((partial_sum, question) => partial_sum + question.marks, 0)}
+          </div>
+        )}
         <Grid item xs={12} sm={5} style={{ width: '100%' }}>
           <Grid style={{ paddingTop: '10px' }}>
             <div>

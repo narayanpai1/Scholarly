@@ -4,7 +4,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import uploadService from '../../services/uploadService';
@@ -14,10 +13,6 @@ function ImageUploadModel(props) {
   const [imageWarning, setImageWarning] = React.useState('');
 
   const uploadImage = () => {
-    console.log(props.contextData);
-    console.log(image);
-    console.log(image.size);
-
     if (image.size > 3110670) {
       setImageWarning('File Size is too big');
     } else {

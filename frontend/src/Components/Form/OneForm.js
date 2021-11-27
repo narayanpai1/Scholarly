@@ -58,7 +58,6 @@ export default function OneForm(props) {
 
   // If student, set the visibility of the action buttons based on the form-response
   React.useEffect(() => {
-    console.log(formResponse);
     if (formResponse === null || courseLinkPrefix === '/form') return;
 
     if (Object.keys(formResponse).length !== 0) {
@@ -70,13 +69,8 @@ export default function OneForm(props) {
       let currDateTime = new Date(),
         startTime = new Date(formData.startTime),
         endTime = new Date(formData.endTime);
-      console.log(currDateTime, formData.startTime);
-      if (currDateTime > startTime && currDateTime < endTime) {
-        console.log('hey');
-        setDisabled(false);
-      } else {
-        setDisabled(true);
-      }
+
+      setDisabled(!(currDateTime > startTime && currDateTime < endTime));
     }
   }, [formResponse]);
 
@@ -89,11 +83,7 @@ export default function OneForm(props) {
     <Grid item xs={12} sm={6} md={3}>
       <Card className={classes.root}>
         <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image={'/course-' + getRandomInt(5) + '.jpg'}
-            title="Contemplative Reptile"
-          />
+          <CardMedia className={classes.media} sx={{height:'40px'}} image={'/course-' + getRandomInt(5) + '.jpg'} />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {formData.name}
@@ -121,20 +111,22 @@ export default function OneForm(props) {
             >
               {courseLinkPrefix === '/form' && (
                 <>
-                  Last updated: <Moment fromNow>{formData.updatedAt}</Moment>
+                  <b>Last updated:</b> <Moment fromNow>{formData.updatedAt}</Moment>
                   <br />
                 </>
               )}
-              {formData.startTime && <>Starts at: {getDateString(formData.startTime)}</>}
+              {formData.totalMarks && <><b>Maximum Marks:</b> {formData.totalMarks}</>}
+              <br/>
+              {formData.startTime && <><b>Starts at:</b> {getDateString(formData.startTime)}</>}
               <br />
-              {formData.endTime && <> Ends at: {getDateString(formData.endTime)}</>}
+              {formData.endTime && <><b> Ends at:</b> {getDateString(formData.endTime)}</>}
               <br />
 
               {disabled === false && (
                 <Button
                   size="small"
                   href={courseLinkPrefix ? courseLinkPrefix + '/' + formData._id : ''}
-                  sx={{ padding: 0, marginTop:1 }}
+                  sx={{ padding: 0, marginTop: 1 }}
                 >
                   {courseLinkPrefix === '/form' && <>Manage Test</>}
                   {courseLinkPrefix === '/s' &&

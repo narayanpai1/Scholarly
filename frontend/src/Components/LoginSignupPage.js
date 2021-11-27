@@ -161,7 +161,6 @@ function SignUpForm(props) {
     event.preventDefault();
     setError(null);
     const data = new FormData(event.currentTarget);
-    console.log(data.get('profileType'));
 
     let valid = true;
     let helpersTemp = Object.assign({}, defaultHelpers);
@@ -321,7 +320,6 @@ export default function LoginSignupPage(props) {
   const loginGoogle = (response) => {
     auth.loginWithGoogle(response).then(
       (res) => {
-        console.log(res);
         if (res.data && res.data.accessToken) {
           history.push('/home');
         } else {
@@ -346,10 +344,6 @@ export default function LoginSignupPage(props) {
       isStudent: data.get('profileType') === 'student',
       profileObj: Object.assign({}, oAuthData),
     });
-  };
-
-  const handleLoginFailure = () => {
-    console.log('Failed to log in');
   };
 
   if (auth.isAuthenticated()) {
@@ -420,14 +414,12 @@ export default function LoginSignupPage(props) {
             )}
             {!oAuthData && loginForm && (
               <LoginForm
-                handleLoginFailure={handleLoginFailure}
                 loginGoogle={loginGoogle}
                 setLoginForm={setLoginForm}
               />
             )}
             {!oAuthData && !loginForm && (
               <SignUpForm
-                handleLoginFailure={handleLoginFailure}
                 loginGoogle={loginGoogle}
                 setLoginForm={setLoginForm}
               />
@@ -447,7 +439,6 @@ export default function LoginSignupPage(props) {
                   )}
                   buttonText="Login"
                   onSuccess={loginGoogle}
-                  onFailure={handleLoginFailure}
                   cookiePolicy={'single_host_origin'}
                   responseType="code,token"
                 />

@@ -16,7 +16,6 @@ class formService extends baseAPIService {
     return axios
       .post(this.url + '/addresponse', data, { headers: authService.getAuthHeaders() })
       .then((response) => {
-        console.log(response.data);
         return response.data;
       });
   }
@@ -25,7 +24,6 @@ class formService extends baseAPIService {
     return axios
       .get(this.url + '/getresponse/' + formId, { headers: authService.getAuthHeaders() })
       .then((response) => {
-        // console.log(response.data);
         return response.data;
       });
   }
@@ -34,7 +32,6 @@ class formService extends baseAPIService {
     return axios
       .get(this.url + '/getmyresponse/' + formId, { headers: authService.getAuthHeaders() })
       .then((response) => {
-        // console.log(response.data);
         return response.data;
       });
   }

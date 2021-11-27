@@ -16,7 +16,6 @@ class courseService extends baseAPIService {
     return axios
       .get(this.url + '/forms/' + courseId, { headers: authService.getAuthHeaders() })
       .then((response) => {
-        console.log(response.data);
         return response.data;
       });
   }
@@ -25,7 +24,6 @@ class courseService extends baseAPIService {
     return axios
       .get(this.url + '/enrolled', { headers: authService.getAuthHeaders() })
       .then((response) => {
-        // console.log(response.data);
         return response.data;
       });
   }

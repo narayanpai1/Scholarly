@@ -196,7 +196,6 @@ function CourseView(props) {
     }
     formService.add(data).then(
       (result) => {
-        console.log(result);
         history.push('/form/' + result._id);
       },
 

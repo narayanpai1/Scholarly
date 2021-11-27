@@ -92,8 +92,7 @@ function ResponseTab(props) {
       { field: 'name', headerName: 'Name', width: 200 },
     ];
     let rowsTemp = [];
-    console.log(questions);
-    console.log(responseData);
+
     questions.forEach((question, id) => {
       id++;
       columnsTemp.push({

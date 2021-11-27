@@ -4,6 +4,7 @@ import { makeStyles } from '@mui/styles';
 import { Typography } from '@mui/material';
 
 import QuestionsTab from './QuestionsTab';
+import FormDetailsTab from './FormDetailsTab';
 import ResponseTab from '../Response/ResponseTab';
 import formService from '../../services/formService';
 import TabPanel from '../util/TabPanel';
@@ -34,7 +35,7 @@ const useStyles = makeStyles(() => ({
  */
 function EditForm(props) {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [tabIndex, setTabIndex] = React.useState(1);
   const [formID, setFormID] = React.useState('');
   
   // these form-details will be passed on to the children
@@ -42,7 +43,7 @@ function EditForm(props) {
   const [formDetails, setFormDetails] = React.useState({});
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setTabIndex(newValue);
   };
 
   // fetch the form firstly
@@ -53,7 +54,6 @@ function EditForm(props) {
       formService.get(formId).then(
         (data) => {
           setFormDetails(data);
-          console.log(data);
         },
         (error) => {
           const resMessage =
@@ -75,20 +75,25 @@ function EditForm(props) {
             <Typography variant="h6" noWrap style={{ marginTop: '8.5px', color: 'black' }}>
               {formDetails.name}
             </Typography>
+            <Typography variant="div" noWrap style={{ marginTop: '8.5px', color: 'black' }}>
+              {formDetails.description}
+            </Typography>
             <CustomTabs
               handleChange={handleChange}
-              value={value}
-              tabs={['Questions', 'Responses']}
+              value={tabIndex}
+              tabs={['Test Details', 'Questions', 'Responses']}
             />
           </div>
         </div>
+        <div></div>
         <div>
-        </div>
-        <div>
-          <TabPanel value={value} index={0}>
-            <QuestionsTab formData={formDetails} />
+          <TabPanel value={tabIndex} index={0}>
+            <FormDetailsTab formData={formDetails} setFormData={setFormDetails} />
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={tabIndex} index={1}>
+            <QuestionsTab formData={formDetails} setFormData={setFormDetails} />
+          </TabPanel>
+          <TabPanel value={tabIndex} index={2}>
             <ResponseTab formData={formDetails} formId={formID} />
           </TabPanel>
         </div>

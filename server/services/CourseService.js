@@ -100,8 +100,20 @@ module.exports = {
     try {
       var courseId = req.params.courseId;
       var query = { course: new ObjectId(courseId) };
-      await FormModel.find(query).then(async (courses) => {
-        return res.status(200).json(courses);
+      await FormModel.find(query).then(async (forms) => {
+
+        // compute the total marks here itself so that it can be used everywhere
+        forms = forms.map((form)=>{
+          form = form.toObject();
+          form.totalMarks = 0;
+          form.questions.forEach((question) => {
+            form.totalMarks += question.marks;
+          });
+
+          return form;
+        });
+
+        return res.status(200).json(forms);
       });
     } catch (err) {
       return res.status(500).send(err);

@@ -22,8 +22,6 @@ function CourseCard(props) {
       return;
     }
 
-    console.log('Enrolled courses', user);
-
     // Set the visibility of the course based on the tab and tabNumber of student
     // tabNumber = 2 equals 'managed courses' for teachers
     // and it equals 'enrolled courses' for students
@@ -46,9 +44,7 @@ function CourseCard(props) {
       let user_copy = Object.assign({}, user);
       user_copy.enrolledCourses.push(course._id);
       setUser(user_copy);
-      auth.edit(user_copy).then((res) => {
-        console.log('got the response', res);
-      });
+      auth.edit(user_copy);
     } catch (err) {
       console.log(err);
     }
@@ -90,7 +86,7 @@ function CourseCard(props) {
             {course.description}
           </Typography>
         </CardContent>
-        <CardActions sx={{textAlign:'left'}}>
+        <CardActions sx={{ textAlign: 'left', minHeight: '3em', lineHeight: '1.5em' }}>
           {course && user && course.createdBy === user._id && (
             <Button size="small" href={'/course/' + course._id}>
               Manage Course
@@ -103,10 +99,10 @@ function CourseCard(props) {
             user.enrolledCourses.includes(course._id) && (
             <>
               <Button color="primary" size="small" disabled>
-                Enrolled
+                  Enrolled
               </Button>
               <Button size="small" href={'/course/' + course._id}>
-                View Course
+                  View Course
               </Button>
             </>
           )}

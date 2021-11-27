@@ -39,9 +39,7 @@ module.exports = {
       var newForm = new FormModel(data);
       await newForm.save().then((docs) => {
         UserModel.updateOne({ _id: data.createdBy }, { $push: { createdForms: docs._id } })
-          .then(() => {
-            console.log('Form id added to user deeatils');
-          })
+          .then(() => {})
           .catch((error) => console.log(error));
         res.status(200).json(docs);
       });
@@ -58,6 +56,14 @@ module.exports = {
         if (form == null) {
           res.status(404).send('Form not found');
         } else {
+          form = form.toObject();
+          // compute the total marks here itself so that it can be used everywhere
+          let totalMarks = 0;
+          form.questions.forEach((question)=>{
+            totalMarks+=question.marks;
+          });
+          form.totalMarks = totalMarks;
+
           res.status(200).json(form);
         }
       });
@@ -70,19 +76,14 @@ module.exports = {
   deleteForm: async (req, res) => {
     try {
       var formId = req.params.formId;
-      var userId = req.params.userId;
 
       await checkAuthorization(req);
-
-      console.log(formId);
-      console.log(userId);
 
       await FormModel.findOne({ _id: formId }).then(async (form) => {
         form.remove(function (err) {
           if (err) {
             return res.status(500).send(err);
           }
-          console.log('Form deleted');
           return res.status(202).send('Form Deleted');
         });
       });
@@ -94,23 +95,22 @@ module.exports = {
   // sends error if the user is not the owner
   editForm: async (req, res) => {
     try {
-      var formId = req.body.formId;
+      var formId = req.body._id;
       var data = {
         name: req.body.name,
         description: req.body.description,
         questions: req.body.questions,
       };
+      console.log('wfwefw');
 
       await checkAuthorization(req);
-
-      console.log('Hi, I am from backend, this is form data that i recivied');
-
-      console.log(data);
-
+      console.log('wfwefw');
       FormModel.findByIdAndUpdate(formId, data, { new: true }, (err, result) => {
+        console.log(err);
         if (err) {
           res.status(500).send(err);
         } else {
+          console.log(result);
           res.status(200).json(result);
         }
       });
@@ -121,11 +121,11 @@ module.exports = {
 
   submitResponse: async (req, res) => {
     try {
-      // let oldResponses = await ResponseModel.find({formId:req.body.formId, userId:req.user._id});
+      let oldResponses = await ResponseModel.find({formId:req.body.formId, userId:req.user._id});
       
-      // // not an error since a user might sometimes click on submit button multiple times
-      // if(oldResponses.length>0)
-      //   return res.status(200).json({message:'Already submitted'});
+      // not an error since a user might sometimes click on submit button multiple times
+      if(oldResponses.length>0)
+        return res.status(200).json({message:'Already submitted'});
       
       if(!req.user.isStudent)
         throw 'A teacher cannot attempt a test';
@@ -138,7 +138,6 @@ module.exports = {
       };
 
       var newResponse = new ResponseModel(data);
-      // console.log(newResponse);
 
       await newResponse.save().then((docs) => {
         res.status(200).json(docs);
@@ -170,7 +169,7 @@ module.exports = {
 
   getMyResponse: async (req, res) => {
     var formId = req.params.formId;
-    console.log('hey');
+
     ResponseModel.findOne({ formId: formId, userId: req.user._id })
       .then((response) => {
         if (!response) response = {};

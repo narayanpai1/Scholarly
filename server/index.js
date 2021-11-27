@@ -58,7 +58,6 @@ app.post('/', upload.single('myfile'), async (req, res) => {
   };
   var newImage = new ImageModel(data);
   await newImage.save().then((docs) => {
-    console.log(docs);
     res.json({ image: docs.image, host: req.protocol + '://' + req.get('host') });
   });
 });

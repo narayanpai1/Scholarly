@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
 
 import courseService from '../services/courseService';
 import CourseList from './Course/CourseList';
@@ -60,7 +61,6 @@ function Dashboard() {
       formData.append('myfile', image);
       uploadService.uploadImage(formData).then(
         (data) => {
-          console.log(data);
           setImageUrl(data.host + '/' + data.image);
           setImageUploading(false);
         },
@@ -69,7 +69,7 @@ function Dashboard() {
             (error.response && error.response.data && error.response.data.message) ||
             error.message ||
             error.toString();
-          console.log(resMessage);
+
           setImageWarning(resMessage);
           setImageUploading(false);
         },
@@ -104,7 +104,7 @@ function Dashboard() {
       description: courseDescription,
       url: imageUrl,
     };
-    console.log(data.name, imageWarning, imageUploading);
+
     if(data.name===''){
       setCourseNameHelper('Course Name is required');
       return;
@@ -112,7 +112,6 @@ function Dashboard() {
     if (imageWarning === '' && !imageUploading) {
       courseService.add(data).then(
         (result) => {
-          console.log(result);
           setOpen(false);
           history.push('/course/' + result._id);
         },
@@ -131,19 +130,34 @@ function Dashboard() {
   return (
     <>
       <NavigBar />
-      <div
-        style={{
+      <Grid
+        container
+        sx={{
           backgroundColor: '#1976d2',
           color: 'white',
           textAlign: 'left',
-          padding: '20px',
-          paddingBottom: '0px',
-          marginBottom:'0px'
+          padding: '0px',
+          margin: '0px',
+          width:'100%'
         }}
+        spacing={5}
       >
-        {Object.keys(user).length !== 0 && <h3>Hey there! {user.name}</h3>}
-        <h1>Dashboard</h1>
-      </div>
+        <Grid item sm={2}>
+          <img src="/dashboard.png" style={{ width: '100%' }} />
+        </Grid>
+        <Grid item sm={10}>
+          <div 
+            style={{display: 'flex',
+              justifyContent: 'flex-end',
+              flexDirection: 'column',
+              height:'100%'
+            }}>
+            <h1>Dashboard</h1>
+
+            {Object.keys(user).length !== 0 && <h3>Hey there! {user.name}</h3>}
+          </div>
+        </Grid>
+      </Grid>
       <CustomTabs
         value={tabValue}
         handleChange={handleTabChange}
@@ -153,6 +167,7 @@ function Dashboard() {
             : ['Explore Courses', 'Enrolled Courses']
         }
       />
+
       <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Create a new Course</DialogTitle>
         <DialogContent fullWidth>

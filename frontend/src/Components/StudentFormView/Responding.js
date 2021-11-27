@@ -29,7 +29,6 @@ function Responding(props) {
   const handleRadioChange = (j, i) => {
     var optionId = j;
     var responseDataTemp = [...responseData];
-    console.log(j, i);
     const index = responseDataTemp[i].optionId.indexOf(j);
 
     if (index > -1) {
@@ -42,13 +41,12 @@ function Responding(props) {
 
   React.useEffect(() => {
     if (!formData) return;
-    console.log(formData);
+
     var responseDataTemp = [];
 
     var timeRefresh = setInterval(async () => {
       let dt1 = new Date();
       let dt2 = new Date(formData.endTime);
-      console.log(dt2);
 
       let diff = (dt2.getTime() - dt1.getTime()) / 1000;
       // let diff = 0;
@@ -64,7 +62,6 @@ function Responding(props) {
         return;
       }
 
-      console.log(diff);
       let days = Math.floor(diff / (24 * 3600));
       diff %= 24 * 3600;
       let hours = Math.floor(diff / 3600);
@@ -100,17 +97,14 @@ function Responding(props) {
   }, [formData]);
 
   function submitResponse() {
-    console.log(responseData);
     var submissionData = {
       formId: formData._id,
       response: responseData,
     };
-    console.log(submissionData);
-    console.log('inside submit');
+
     formService.submitResponse(submissionData).then(
-      (data2) => {
+      () => {
         setIsSubmitted(true);
-        console.log(data2);
       },
       (error) => {
         const resMessage =
@@ -145,13 +139,32 @@ function Responding(props) {
   }
   return !isSubmitted && !timedOut ? (
     <div>
-      {timeRemaining !== '' && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <div style={{ margin: '10px 20px', padding: '2px 10px', backgroundColor: '#66ff33' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        {formData && formData.totalMarks && (
+          <div
+            style={{
+              margin: '10px 20px',
+              padding: '2px 10px',
+              borderRadius: '4px',
+              backgroundColor: '#d9d9d9',
+            }}
+          >
+            Maximum Marks: {formData.totalMarks}
+          </div>
+        )}
+        {timeRemaining !== '' && (
+          <div
+            style={{
+              margin: '10px 20px',
+              borderRadius: '4px',
+              padding: '2px 10px',
+              backgroundColor: '#d9d9d9',
+            }}
+          >
             {timeRemaining}
           </div>
-        </div>
-      )}
+        )}
+      </div>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={sendingResponse}
@@ -201,8 +214,7 @@ function Responding(props) {
                       textAlign: 'left',
                     }}
                   >
-                        Marks: {ques.marks}
-
+                    Marks: {ques.marks}
                   </div>
                   <div>
                     <FormGroup

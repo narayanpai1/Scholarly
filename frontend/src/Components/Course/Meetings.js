@@ -46,7 +46,6 @@ function Meetings(props) {
 
     meetingService.getAllMeetingsOfCourse(course._id).then(
       (meetings) => {
-        console.log(meetings);
         setMeetings(meetings);
         setLoadingForms(false);
       }
@@ -75,10 +74,10 @@ function Meetings(props) {
                     <CardActionArea>
                       <CardMedia
                         className={classes.media}
+                        sx={{ height: '40px' }} 
                         image={'/course-' + getRandomInt(5) + '.jpg'}
-                        title="Contemplative Reptile"
                       />
-                      <CardContent sx={{ backgroundColor: '#e6e6e6' }}>
+                      <CardContent>
                         <div
                           style={{
                             lineHeight: '1.5em',

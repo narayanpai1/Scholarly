@@ -39,7 +39,6 @@ function Forms(props) {
 
     formService.getAllFormsOfCourse(course._id).then(
       (forms) => {
-        console.log(forms);
         setForms(forms);
         setLoadingForms(false);
       },
@@ -65,7 +64,6 @@ function Forms(props) {
     else setCourseLinkPrefix('/s');
   }, [user, course]);
 
-  console.log('forms ', forms);
   return (
     <div>
       <div>

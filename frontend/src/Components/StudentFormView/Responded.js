@@ -10,7 +10,6 @@ import Checkbox from '@mui/material/Checkbox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Box from '@mui/material/Box';
 
-
 /***
  * The component shown when the user has already responded to the test.
  * 
@@ -18,7 +17,6 @@ import Box from '@mui/material/Box';
  */
 function Responded(props) {
   let { formData, responseData } = props;
-  const [maxMarks, setMaxMarks] = React.useState(null);
   const [totalObtainedMarks, setTotalObtainedMarks] = React.useState(null);
   const [perQuestionData, setPerQuestionData] = React.useState(null);
 
@@ -26,7 +24,6 @@ function Responded(props) {
     if (!responseData) return;
 
     let perQuestionDataTemp = [],
-      maxMarksTemp = 0,
       totalObtainedMarksTemp = 0;
 
     formData.questions.forEach((question, i) => {
@@ -77,11 +74,9 @@ function Responded(props) {
 
       marksObtained = (correctAnswers * formData.questions[i].marks) / actualCorrectAnswers;
       totalObtainedMarksTemp += marksObtained;
-      maxMarksTemp += formData.questions[i].marks;
 
       perQuestionDataTemp.push({ markedOptions, correctOptions, marksObtained });
     });
-    setMaxMarks(maxMarksTemp);
     setTotalObtainedMarks(totalObtainedMarksTemp);
     setPerQuestionData(perQuestionDataTemp);
   }, [responseData, formData]);
@@ -92,7 +87,7 @@ function Responded(props) {
         {totalObtainedMarks !== null && (
           <div style={{ textAlign: 'left' }}>
             <h3>Summary</h3>
-            Maximum Marks: &nbsp; {maxMarks}
+            Maximum Marks: &nbsp; {formData.totalMarks}
             <br />
             Marks Secured: &nbsp;{totalObtainedMarks.toPrecision(2)}
             <br />

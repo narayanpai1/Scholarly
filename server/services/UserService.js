@@ -8,29 +8,22 @@ module.exports = {
    * Handles ogin request with email and password
    */
   login: async (req, res) => {
-    console.log('heel');
-    console.log(req.body.email);
-
     UserModel.find({
       email: req.body.email,
     }).then((user) => {
-      console.log(user);
       if (user.length < 1) {
         return res.status(401).json({
-          message: 'Auth failed 1',
+          message: 'Auth failed',
         });
       }
 
-      console.log(req.body.password, user[0].password);
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
-        console.log(err);
         if (err) {
           return res.status(401).json({
-            message: 'Auth failed 2',
+            message: 'Auth failed',
           });
         }
         if (result) {
-          console.log(JWT_KEY);
           const token = jwt.sign(user[0].toJSON(), JWT_KEY, {
             expiresIn: '24h',
           });
@@ -40,7 +33,7 @@ module.exports = {
           });
         }
         res.status(401).json({
-          message: 'Auth failed 3',
+          message: 'Auth failed',
         });
       });
     });
@@ -52,7 +45,7 @@ module.exports = {
   loginFromGoogle: async (req, res) => {
     try {
       var result = await UserModel.findOne({ email: req.body.email }).lean();
-      console.log(req.body);
+
       if (!result) {
         if (req.body.isStudent === undefined) {
           return res.status(200).json(req.body);
@@ -66,7 +59,6 @@ module.exports = {
 
         var newUser = new UserModel(gData);
         newUser.save().then((user) => {
-          console.log(user.toJSON());
           const accessToken = jwt.sign(user.toJSON(), JWT_KEY);
 
           res.status(200).json({
@@ -88,7 +80,6 @@ module.exports = {
    * Handles new account creation request
    */
   signup: (req, res) => {
-    console.log(req.body);
     bcrypt.hash(req.body.password, 10, async (err, hash) => {
       if (err) {
         console.log(err);
@@ -115,7 +106,7 @@ module.exports = {
             newUser = new UserModel(newUser);
             newUser.save().then(async (resUser) => {
               const accessToken = await jwt.sign(resUser.toJSON(), JWT_KEY);
-              console.log(accessToken);
+
               res.status(200).json({
                 accessToken,
               });
@@ -126,7 +117,6 @@ module.exports = {
             });
           }
         } catch (err) {
-          console.log('oooi', err);
           res.status(500).json({
             error: 'Internal Server Error',
           });

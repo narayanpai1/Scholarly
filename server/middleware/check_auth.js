@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { JWT_KEY } = require('../config');
+const Logger = require('../Logger');
 
 /***
  * All the requests except login should go through this middleware.
@@ -10,7 +11,7 @@ module.exports = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const decoded = jwt.verify(token, JWT_KEY);
-    console.log('Decoded2', decoded);
+    Logger.log(0, 'User logged in', decoded);
     req.user = decoded;
     next();
   } catch (error) {

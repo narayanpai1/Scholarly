@@ -89,7 +89,7 @@ module.exports = {
 
       let resData = [];
       meetings.forEach((meeting) => {
-        console.log(meeting);
+
         let link= api.administration.join(
           req.user.name,
           meeting._id.toString(),

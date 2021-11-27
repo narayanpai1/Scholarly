@@ -70,4 +70,4 @@ jobs:
       - name: Push
         run: |
           git checkout -b deploy
-          git push origin deploy
+          git push origin deploy -f
