@@ -1,11 +1,10 @@
 import React from 'react';
 
 import { makeStyles } from '@mui/styles';
-
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   title: {
     flexGrow: 1,
     alignSelf: 'flex-end',
@@ -13,6 +12,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+/***
+ * The component listing different tabs. 
+ * Used with TabPanel to produce different tabs
+ */
 export default function CustomTabs(props) {
   const classes = useStyles();
   let { handleChange, value, tabs } = props;

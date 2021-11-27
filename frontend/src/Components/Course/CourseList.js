@@ -23,9 +23,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+
+/***
+ * A component containing different courses to be shown.
+ * It gets the courses from the API and passes it on to different `CourseCard`s
+ */
 function CourseList(props) {
   const classes = useStyles();
-  let { type } = props;
+  let { tabNumber } = props;
   const [user, setUser] = React.useState({});
   const [courses, setCourses] = React.useState([]);
   const [loadingCourses, setLoadingCourses] = React.useState(true);
@@ -63,7 +68,9 @@ function CourseList(props) {
         <Container className={classes.cardGrid} maxWidth="lg">
           <Grid container spacing={6}>
             {courses.map((course, i) => (
-              <CourseCard type={type} course={course} key={i} setUser={setUser} user={user} />
+              // pass the setUser since the course enrollment 
+              // should change the user state of this component too
+              <CourseCard tabNumber={tabNumber} course={course} key={i} setUser={setUser} user={user} />
             ))}
           </Grid>
         </Container>

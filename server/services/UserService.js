@@ -4,10 +4,12 @@ const bcrypt = require('bcrypt');
 const { JWT_KEY } = require('../config');
 
 module.exports = {
+  /***
+   * Handles ogin request with email and password
+   */
   login: async (req, res) => {
     console.log('heel');
     console.log(req.body.email);
-    
 
     UserModel.find({
       email: req.body.email,
@@ -44,9 +46,13 @@ module.exports = {
     });
   },
 
+  /***
+   * Handles login request from Google-OAuth
+   */
   loginFromGoogle: async (req, res) => {
     try {
       var result = await UserModel.findOne({ email: req.body.email }).lean();
+      console.log(req.body);
       if (!result) {
         if (req.body.isStudent === undefined) {
           return res.status(200).json(req.body);
@@ -78,6 +84,9 @@ module.exports = {
     }
   },
 
+  /***
+   * Handles new account creation request
+   */
   signup: (req, res) => {
     console.log(req.body);
     bcrypt.hash(req.body.password, 10, async (err, hash) => {
@@ -126,6 +135,9 @@ module.exports = {
     });
   },
 
+  /***
+   * Gets the details of the user who sends the request
+   */
   getUser: async (req, res) => {
     try {
       var result = await UserModel.findOne({ _id: req.user._id }).lean();
@@ -135,6 +147,9 @@ module.exports = {
     }
   },
 
+  /***
+   * Edits the details of the user who sends the request
+   */
   editUser: async (req, res) => {
     try {
       var result = await UserModel.findByIdAndUpdate(req.user._id, req.body, { new: true });

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
@@ -28,6 +29,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+
+/***
+ * A card showing a single form/test in the tests tab of course page
+ * 
+ * The card contains option to manage, attempt or review test depending on the context
+ */
 export default function OneForm(props) {
   let { formData, courseLinkPrefix } = props;
   const classes = useStyles();
@@ -43,16 +50,23 @@ export default function OneForm(props) {
         setFormResponse(res);
       });
     } else {
+      // if I am the course instructor, then I dont have to wait to see if I have
+      // responded to the test or not
       setDisabled(false);
     }
   }, [courseLinkPrefix, formData]);
 
+  // If student, set the visibility of the action buttons based on the form-response
   React.useEffect(() => {
     console.log(formResponse);
     if (formResponse === null || courseLinkPrefix === '/form') return;
+
     if (Object.keys(formResponse).length !== 0) {
+      // If already responded, show the review button
       setDisabled(false);
     } else {
+    
+      // check if the test is still active and hence decide the visibility
       let currDateTime = new Date(),
         startTime = new Date(formData.startTime),
         endTime = new Date(formData.endTime);

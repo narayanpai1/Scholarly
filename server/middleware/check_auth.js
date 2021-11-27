@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { JWT_KEY } = require('../config');
 
+/***
+ * All the requests except login should go through this middleware.
+ * It checks if the user is authorized. It not, sends 401 error.
+ * It authorized, adds user property to request for faster access.
+ */
 module.exports = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];

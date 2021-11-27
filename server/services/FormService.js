@@ -3,6 +3,10 @@ const UserModel = require('../db/User');
 const CourseModel = require('../db/Course');
 const ResponseModel = require('../db/Response');
 
+/***
+ * Checks if the user is the creator of the
+ * form(ie of the course the form is present in)
+ */
 async function checkAuthorization(req) {
   let form = await FormModel.findOne({ _id: req.params.formId });
   let course = await CourseModel.findOne({ _id: form.course });
@@ -12,11 +16,15 @@ async function checkAuthorization(req) {
 }
 
 module.exports = {
+  /***
+   * Creates a new test under the course
+   * If the user is not the owner of the course, sends an error message
+   */
   createForm: async (req, res) => {
     try {
       let course = await CourseModel.findOne({ _id: req.body.course });
 
-      if (course.createdBy !== req.user._id) {
+      if (course.createdBy != req.user._id) {
         throw 'Not authorized';
       }
 
@@ -58,6 +66,7 @@ module.exports = {
     }
   },
 
+  // sends error if the user is not the owner
   deleteForm: async (req, res) => {
     try {
       var formId = req.params.formId;
@@ -82,6 +91,7 @@ module.exports = {
     }
   },
 
+  // sends error if the user is not the owner
   editForm: async (req, res) => {
     try {
       var formId = req.body.formId;
@@ -111,15 +121,22 @@ module.exports = {
 
   submitResponse: async (req, res) => {
     try {
+      // let oldResponses = await ResponseModel.find({formId:req.body.formId, userId:req.user._id});
+      
+      // // not an error since a user might sometimes click on submit button multiple times
+      // if(oldResponses.length>0)
+      //   return res.status(200).json({message:'Already submitted'});
+      
+      if(!req.user.isStudent)
+        throw 'A teacher cannot attempt a test';
+
       var data = {
         formId: req.body.formId,
         user: req.user.name,
         userId: req.user._id,
         response: req.body.response,
       };
-      console.log(data.formId);
-      console.log(data.userId);
-      console.log(data);
+
       var newResponse = new ResponseModel(data);
       // console.log(newResponse);
 
@@ -128,10 +145,15 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.send(error);
+      res.status(401).json({message:error});
     }
   },
 
+  /***
+   * Gets all the responses of a test.
+   * 
+   * Requires the user to be the owner of the test and hence the course
+   */
   getResponse: async (req, res) => {
     try {
       var formId = req.params.formId;
@@ -142,7 +164,7 @@ module.exports = {
         res.status(200).json(responses);
       });
     } catch (error) {
-      res.send(error.message);
+      res.status(500).send(error.message);
     }
   },
 

@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/**
+ * A component containing home icon and app name
+ */
 export default function Logo() {
   const classes = useStyles();
 

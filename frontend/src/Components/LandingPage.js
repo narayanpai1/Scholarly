@@ -1,20 +1,14 @@
 import React from 'react';
 
 import { useHistory, Redirect } from 'react-router-dom';
-
-import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { makeStyles } from '@mui/styles';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
-import ViewListIcon from '@mui/icons-material/ViewList';
 import Paper from '@mui/material/Paper';
 import Hidden from '@mui/material/Hidden';
 import CardActionArea from '@mui/material/CardActionArea';
@@ -115,6 +109,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/***
+ * The landing page to the app whenever a user visits the website for the 
+ * first time.
+ * 
+ * It contains link for sign-up, login and lists different features of the website.
+ */
 export default function LandingPage() {
   const classes = useStyles();
   let history = useHistory();
@@ -234,7 +234,6 @@ export default function LandingPage() {
                           </Typography>
                           <Typography variant="subtitle1" paragraph>
                             Getting virtual is the new trend.
-                            <br />
                             With a feature packed meeting room tailor-made for education, even
                             learning and interacting can now be virtual.
                           </Typography>

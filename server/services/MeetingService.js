@@ -17,6 +17,11 @@ function makeid(length) {
 }
 
 module.exports = {
+  /**
+   * Creates a new meeting and sends the meet link with moderator permissions.
+   * 
+   * If the user is not the owner of the course, sends an error
+   */
   createMeeting: async (req, res) => {
     try {
       let course = await CourseModel.findOne({ _id: req.body.course });
@@ -69,22 +74,11 @@ module.exports = {
     }
   },
 
-  getMeetingLink: async (req, res) => {
-    try {
-      let meeting = await MeetingModel.findOne({ _id: req.params.meetingId });
-      res.status(200).send({
-        link: api.administration.join(
-          req.user.name,
-          req.params.meetingId,
-          req.user.isStudent ? meeting.attendeePassword : meeting.moderatorPassword,
-        ),
-      });
-      
-    } catch (err) {
-      res.status(401).send(err);
-    }
-  },
-
+  /***
+   * Get all the meetings of a course.
+   * 
+   * Populates all the details of the meeting such as user-name, meeting recording(if any), etc
+   */
   getAllMeetingsOfCourse: async (req, res) => {
     try {
       let meetings = await MeetingModel.find({ course: req.params.courseId });

@@ -9,11 +9,13 @@ try{
 catch(e){
   console.log(e);
 }
-let getMeetingsUrl = api.recording.getRecordings();
+// let getMeetingsUrl = api.recording.getRecordings();
 let http = bbb.http; 
 async function a(){
-  let res = await http(getMeetingsUrl);
-  console.log(res);
+  // let res = await http(getMeetingsUrl);
+  // console.log(res);
+  let b=console.trace();
+  console.log(b);
 }
 
 a();

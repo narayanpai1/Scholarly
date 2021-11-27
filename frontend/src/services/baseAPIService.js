@@ -1,6 +1,15 @@
 import axios from 'axios';
 import authService from './authService';
 
+/***
+ * The base class for different REST APIs in the app.
+ * 
+ * Get a resource: GET /<resource_name>/:res_id
+ * Get all the resources: GET /<resource_name>
+ * Create a resource: POST /<resource_name>
+ * Update a resource: PUT /<resource_name>/:res_id
+ * Delete a resource: DELETE /<resource_name>/:res_id
+ */
 class baseAPIService {
   constructor(endpoint) {
     this.url = baseAPIService.BASE_URL + endpoint;

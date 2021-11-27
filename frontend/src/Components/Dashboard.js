@@ -1,8 +1,6 @@
-/* eslint-disable quotes */
 import React from 'react';
 
 import { makeStyles } from '@mui/styles';
-import Box from '@mui/material/Box';
 import { useHistory } from 'react-router-dom';
 
 import Dialog from '@mui/material/Dialog';
@@ -11,31 +9,25 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+
 import courseService from '../services/courseService';
 import CourseList from './Course/CourseList';
 import uploadService from '../services/uploadService';
-
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import CustomTabs from './util/CustomTabs';
 import NavigBar from '../Components/NavigBar';
 import TabPanel from './util/TabPanel';
 import auth from '../services/authService';
-const useStyles = makeStyles((theme) => ({
+
+const useStyles = makeStyles(() => ({
   newCourseButton: { float: 'right' },
 }));
 
+/***
+ * The user dashboard containing different tabs like
+ * All Courses, Enrolled Courses, Manage Courses depending on the user-type.
+ * 
+ * It contains the form to create a new course too.
+ */
 function Dashboard() {
   let history = useHistory();
   const classes = useStyles();
@@ -141,7 +133,6 @@ function Dashboard() {
       <NavigBar />
       <div
         style={{
-          // eslint-disable-next-line quotes
           backgroundColor: '#1976d2',
           color: 'white',
           textAlign: 'left',
@@ -239,7 +230,7 @@ function Dashboard() {
             </Button>
           )}
         </TabPanel>
-        <CourseList type={tabValue} />
+        <CourseList tabNumber={tabValue} />
       </div>
     </>
   );

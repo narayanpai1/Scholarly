@@ -9,13 +9,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import uploadService from '../../services/uploadService';
 
-function ImageUplaodModel(props) {
+function ImageUploadModel(props) {
   const [image, setImage] = React.useState(undefined);
   const [imageWarning, setImageWarning] = React.useState('');
-
-  // const selectImage = (e)=>{
-  //   setImage({ image:e.target.files[0]})
-  // }
 
   const uploadImage = () => {
     console.log(props.contextData);
@@ -29,7 +25,6 @@ function ImageUplaodModel(props) {
       formData.append('myfile', image);
       uploadService.uploadImage(formData).then(
         (data) => {
-          // console.log(data);
           var imageLink = data.host + '/' + data.image;
           props.handleImagePopClose();
           props.updateImageLink(imageLink, props.contextData);
@@ -54,10 +49,6 @@ function ImageUplaodModel(props) {
       >
         <DialogTitle id="form-dialog-title">Upload Image Here</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Hey, Creating a Community is fun and easy, just fill these easy fields and get your
-            personlized gang ready within seconds. for question
-          </DialogContentText>
           <TextField type="file" onChange={(e) => setImage(e.target.files[0])} />
           {imageWarning !== '' ? <p>{imageWarning}</p> : ''}
         </DialogContent>
@@ -75,4 +66,4 @@ function ImageUplaodModel(props) {
   );
 }
 
-export default ImageUplaodModel;
+export default ImageUploadModel;

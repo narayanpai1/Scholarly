@@ -1,35 +1,27 @@
 import React from 'react';
-import formService from '../../services/formService';
 
-import { makeStyles } from '@mui/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import { DataGrid } from '@mui/x-data-grid';
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+import formService from '../../services/formService';
 
+
+/***
+ * The response tab of the Manage Test page.
+ * 
+ * It lets the course instructor see different responses of the test and 
+ * also the grades for each response
+ */
 function ResponseTab(props) {
-  const classes = useStyles();
-
-  const [formData, setFormData] = React.useState({});
   const [responseData, setResponseData] = React.useState([]);
   const [questions, setQuestions] = React.useState([]);
 
-  const [rows, setRows] = React.useState([]);
-  const [columns, setColumns] = React.useState([]);
+  const [rows, setRows] = React.useState([]); //  the rows of the response table
+  const [columns, setColumns] = React.useState([]); // the columns of the response table
 
-  function getSelectedOption(qId, i, j) {
-    var oneResData = responseData[j];
-    var selectedOp = oneResData.response.filter((qss) => qss.questionId === qId);
+  // get the selected options of a question, along with the correct options
+  function getSelectedOption(questionId, questionIndex, studentIndex) {
+    var oneResData = responseData[studentIndex];
+    var selectedOp = oneResData.response.filter((qss) => qss.questionId === questionId);
 
     let optionName = '',
       correctAnswers = 0,
@@ -37,7 +29,7 @@ function ResponseTab(props) {
       flag = 0;
 
     if (selectedOp.length > 0) {
-      questions[i].options.find((oo, index) => {
+      questions[questionIndex].options.find((oo, index) => {
         if (selectedOp[0].optionId.includes(oo._id)) {
           if (optionName) {
             optionName += ', ';
@@ -53,7 +45,7 @@ function ResponseTab(props) {
       });
     }
 
-    questions[i].options.find((oo) => {
+    questions[questionIndex].options.find((oo) => {
       if (oo.isCorrect) {
         actualCorrectAnswers += 1;
       }
@@ -70,6 +62,30 @@ function ResponseTab(props) {
     return { optionName, correctAnswers, actualCorrectAnswers };
   }
 
+  // get the responses of all the students
+  React.useEffect(() => {
+    if (props.formData) {
+      setQuestions(props.formData.questions);
+    }
+    var formId = props.formId;
+    if (formId !== undefined && formId !== '') {
+      formService.getResponse(formId).then(
+        (data) => {
+          setResponseData(data);
+        },
+        (error) => {
+          const resMessage =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+          console.log(resMessage);
+          window.location.replace('/error');
+        },
+      );
+    }
+  }, [props.formId, props.formData]);
+
+  // populate the response table once we get the responses of all the students
   React.useEffect(() => {
     let columnsTemp = [
       { field: 'id', hide: true },
@@ -102,6 +118,8 @@ function ResponseTab(props) {
       questions.forEach((question, qIndex) => {
         let option = getSelectedOption(question._id, qIndex, index);
         currRow[question._id] = option.optionName;
+
+        // the marks are divided equally for all the correct options
         currRow.marks += (option.correctAnswers * question.marks) / option.actualCorrectAnswers;
       });
       currRow.marks = currRow.marks.toPrecision(2);
@@ -112,28 +130,6 @@ function ResponseTab(props) {
     setColumns(columnsTemp);
   }, [responseData]);
 
-  React.useEffect(() => {
-    if (props.formData) {
-      setQuestions(props.formData.questions);
-      setFormData(props.formData);
-    }
-    var formId = props.formId;
-    if (formId !== undefined && formId !== '') {
-      formService.getResponse(formId).then(
-        (data) => {
-          setResponseData(data);
-        },
-        (error) => {
-          const resMessage =
-            (error.response && error.response.data && error.response.data.message) ||
-            error.message ||
-            error.toString();
-          console.log(resMessage);
-        },
-      );
-    }
-  }, [props.formId, props.formData]);
-
   return (
     <div style={{ width: '100%' }}>
       <p> Responses</p>
@@ -141,4 +137,5 @@ function ResponseTab(props) {
     </div>
   );
 }
+
 export default ResponseTab;

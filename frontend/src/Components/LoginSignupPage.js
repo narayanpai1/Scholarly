@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -7,9 +6,8 @@ import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { ThemeProvider } from '@mui/material';
+import {ThemeProvider} from '@mui/material';
 import { createTheme } from '@mui/material';
 import { GoogleLogin } from 'react-google-login';
 import GoogleButton from 'react-google-button';
@@ -18,6 +16,9 @@ import MenuItem from '@mui/material/MenuItem';
 
 import auth from '../services/authService';
 
+/***
+ * Copyright details to be shown below login and signup form
+ */
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -50,6 +51,9 @@ const profileTypeOptions = [
   { value: 'teacher', label: 'Teacher' },
 ];
 
+/***
+ * The form for logging in with the help of mail-id and password
+ */
 function LoginForm(props) {
   let history = useHistory();
 
@@ -143,6 +147,9 @@ function LoginForm(props) {
   );
 }
 
+/***
+ * The signup-form that lets the user create an account.
+ */
 function SignUpForm(props) {
   let history = useHistory();
 
@@ -300,14 +307,16 @@ function SignUpForm(props) {
   );
 }
 
-export default function SignInSide(props) {
+/***
+ * The page letting the user to either log-in, sign-up or connect from
+ * Google
+ */
+export default function LoginSignupPage(props) {
   const [loginForm, setLoginForm] = React.useState(props.match.path.includes('login'));
   const [oAuthData, setOAuthData] = React.useState(null);
   let [profileType, setProfileType] = React.useState('student');
 
   let history = useHistory();
-
-  const { from } = { from: { pathname: '/' } };
 
   const loginGoogle = (response) => {
     auth.loginWithGoogle(response).then(

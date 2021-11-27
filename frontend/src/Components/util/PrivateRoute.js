@@ -3,6 +3,9 @@ import { Route, Redirect } from 'react-router-dom';
 
 import auth from '../../services/authService';
 
+/***
+ * Checks if the user has logged in. If not, redirects to login
+ */
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}

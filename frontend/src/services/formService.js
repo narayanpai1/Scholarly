@@ -2,6 +2,11 @@ import axios from 'axios';
 import authService from './authService';
 import baseAPIService from './baseAPIService';
 
+/***
+ * Lets you perform different operations related to forms/tests
+ * 
+ * Sends requests to api/form if needed.
+ */
 class formService extends baseAPIService {
   constructor() {
     super('/form');

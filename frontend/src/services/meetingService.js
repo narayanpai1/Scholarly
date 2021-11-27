@@ -1,6 +1,11 @@
 const axios = require('axios');
 import authService from './authService';
 
+/***
+ * Lets you perform different operations related to meetings
+ * 
+ * Sends requests to api/meeting if needed.
+ */
 export default {
   async add(data) {
     let response = await axios.post(process.env.REACT_APP_BACKEND_URL + '/api/meeting/', data, {

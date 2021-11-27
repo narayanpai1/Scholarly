@@ -1,8 +1,8 @@
 import React from 'react';
-import { Grid } from '@mui/material';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-import { Paper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -13,37 +13,43 @@ import CropOriginalIcon from '@mui/icons-material/CropOriginal';
 import CloseIcon from '@mui/icons-material/Close';
 import Radio from '@mui/material/Radio';
 import MenuItem from '@mui/material/MenuItem';
-import CheckCircle from '@mui/icons-material/CheckCircle';
-
 import FormControlLabel from '@mui/material/FormControlLabel';
 import AccordionActions from '@mui/material/AccordionActions';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import ImageUplaodModel from './ImageUplaodModel';
-import formService from '../../services/formService';
 import CircularProgress from '@mui/material/CircularProgress';
 import SaveIcon from '@mui/icons-material/Save';
+import Snackbar from '@mui/material/Snackbar';
 
-const marks = [
-  { value: 1, label: '1 mark' },
-  { value: 2, label: '2 marks' },
-  { value: 3, label: '3 marks' },
-  { value: 4, label: '4 marks' },
-  { value: 5, label: '5 marks' },
-];
+import ImageUploadModel from './ImageUploadModel';
+import formService from '../../services/formService';
+
+/**
+ * The questions tab of the Manage Test page
+ * 
+ * It lets the course instructor add/see different questions in the test
+ */
 function QuestionsTab(props) {
   const [questions, setQuestions] = React.useState([]);
   const [openUploadImagePop, setOpenUploadImagePop] = React.useState(false);
   const [imageContextData, setImageContextData] = React.useState({ question: null, option: null });
   const [formData, setFormData] = React.useState({});
   const [loadingFormData, setLoadingFormData] = React.useState(true);
+  const [toastMessage, setToastMessage] = React.useState(null);
 
+  const marks = [
+    { value: 1, label: '1 mark' },
+    { value: 2, label: '2 marks' },
+    { value: 3, label: '3 marks' },
+    { value: 4, label: '4 marks' },
+    { value: 5, label: '5 marks' },
+  ];
+
+  // If there are no questions, create a new question as a template
   React.useEffect(() => {
     if (props.formData.questions !== undefined) {
       if (props.formData.questions.length === 0) {
@@ -51,7 +57,7 @@ function QuestionsTab(props) {
           {
             questionText: 'Question',
             marks: 1,
-            options: [{ optionText: 'Option 1', isCorrect: false }],
+            options: [{ optionText: 'Option 1', isCorrect: true }],
             open: false,
           },
         ]);
@@ -63,8 +69,9 @@ function QuestionsTab(props) {
     setFormData(props.formData);
   }, [props.formData]);
 
+  // Validate and save questions using formService
   function saveQuestions() {
-    console.log('auto saving questions initiated');
+    setToastMessage('Saving your questions...');
     var data = {
       formId: formData._id,
       name: formData.name,
@@ -75,6 +82,7 @@ function QuestionsTab(props) {
     expandCloseAll();
 
     var errors = 0;
+    // check if atleast one option is correct
     questions.forEach((ques) => {
       var flag = 0;
       ques.options.forEach((opt) => {
@@ -87,12 +95,20 @@ function QuestionsTab(props) {
       }
     });
 
-    if (errors > 0) return;
-
+    if (errors > 0){
+      setToastMessage('Updating failed! Check if questions have atleast one correct answer');
+      setTimeout(()=>{setToastMessage(null);}, 3000);
+      return;
+    }
+  
     formService.edit(formData._id, data).then(
       (result) => {
         console.log(result);
         setQuestions(result.questions);
+        setToastMessage('Test updated successfully');
+        setTimeout(() => {
+          setToastMessage(null);
+        }, 3000);
       },
       (error) => {
         const resMessage =
@@ -100,20 +116,13 @@ function QuestionsTab(props) {
           error.message ||
           error.toString();
         console.log(resMessage);
+        window.location.replace('/error');
       },
     );
   }
 
-  function checkImageHereOrNotForQuestion(gg) {
-    if (gg === undefined || gg === '') {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  function checkImageHereOrNotForOption(gg) {
-    if (gg === undefined || gg === '') {
+  function checkIfImagePresent(link) {
+    if (link === undefined || link === '') {
       return false;
     } else {
       return true;
@@ -198,29 +207,32 @@ function QuestionsTab(props) {
     setQuestions(qs);
   }
 
-  function handleOptionValue(text, i, j) {
+
+  // change the text of an option
+  function handleOptionValue(text, questionIndex, optionIndex) {
     var optionsOfQuestion = [...questions];
-    optionsOfQuestion[i].options[j].optionText = text;
+    optionsOfQuestion[questionIndex].options[optionIndex].optionText = text;
     setQuestions(optionsOfQuestion);
   }
 
-  function handleQuestionMarks(mark, i) {
+  function handleQuestionMarks(mark, questionIndex) {
     var optionsOfQuestion = [...questions];
-    console.log(mark, i);
-    optionsOfQuestion[i].marks = mark;
+    console.log(mark, questionIndex);
+    optionsOfQuestion[questionIndex].marks = mark;
     setQuestions(optionsOfQuestion);
   }
 
-  function handleOptionCorrectness(i, j) {
+  function handleOptionCorrectness(questionIndex, optionIndex) {
     var optionsOfQuestion = [...questions];
-    optionsOfQuestion[i].error = '';
-    optionsOfQuestion[i].options[j].isCorrect = !optionsOfQuestion[i].options[j].isCorrect;
+    optionsOfQuestion[questionIndex].error = '';
+    optionsOfQuestion[questionIndex].options[optionIndex].isCorrect = !optionsOfQuestion[questionIndex].options[optionIndex].isCorrect;
     setQuestions(optionsOfQuestion);
   }
 
-  function handleQuestionValue(text, i) {
+  // change the text of a question
+  function handleQuestionValue(text, questionIndex) {
     var optionsOfQuestion = [...questions];
-    optionsOfQuestion[i].questionText = text;
+    optionsOfQuestion[questionIndex].questionText = text;
     setQuestions(optionsOfQuestion);
   }
 
@@ -258,7 +270,6 @@ function QuestionsTab(props) {
     } else {
       console.log('Max  5 options ');
     }
-    //console.log(optionsOfQuestion);
     setQuestions(optionsOfQuestion);
   }
 
@@ -330,8 +341,6 @@ function QuestionsTab(props) {
                           paddingBottom: '5px',
                         }}
                       >
-                        {/* <TextField id="standard-basic" label=" " value="Question" InputProps={{ disableUnderline: true }} />  */}
-
                         <Typography variant="subtitle1" style={{ marginLeft: '0px' }}>
                           {i + 1}. {ques.questionText}
                         </Typography>
@@ -424,7 +433,7 @@ function QuestionsTab(props) {
                       </div>
 
                       <div>
-                        {checkImageHereOrNotForQuestion(ques.questionImage) ? (
+                        {checkIfImagePresent(ques.questionImage) ? (
                           <div>
                             <div
                               style={{
@@ -531,7 +540,7 @@ function QuestionsTab(props) {
                             </div>
 
                             <div>
-                              {checkImageHereOrNotForOption(op.optionImage) ? (
+                              {checkIfImagePresent(op.optionImage) ? (
                                 <div>
                                   <div
                                     style={{
@@ -638,40 +647,23 @@ function QuestionsTab(props) {
 
   return (
     <div style={{ marginTop: '15px', marginBottom: '7px', paddingBottom: '30px' }}>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={Boolean(toastMessage)}
+        message={toastMessage}
+        sx={{
+          '.MuiSnackbarContent-root': {
+            fontSize: '18px',
+          },
+        }}
+      />
       <Grid container direction="column" justify="center" alignItems="center">
         {loadingFormData ? <CircularProgress /> : ''}
 
         <Grid item xs={12} sm={5} style={{ width: '100%' }}>
-          {/* <Grid style={{ borderTop: '10px solid teal', borderRadius: 10 }}>
-            <div>
-              <div>
-                <Paper elevation={2} style={{ width: '100%' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                      marginLeft: '15px',
-                      paddingTop: '20px',
-                      paddingBottom: '20px',
-                    }}
-                  >
-                    <Typography
-                      variant="h4"
-                      style={{ fontFamily: 'sans-serif Roboto', marginBottom: '15px' }}
-                    >
-                      {formData.name}
-                    </Typography>
-                    <Typography variant="subtitle1">{formData.description}</Typography>
-                  </div>
-                </Paper>
-              </div>
-            </div>
-          </Grid> */}
-
           <Grid style={{ paddingTop: '10px' }}>
             <div>
-              <ImageUplaodModel
+              <ImageUploadModel
                 handleImagePopOpen={openUploadImagePop}
                 handleImagePopClose={() => {
                   setOpenUploadImagePop(false);

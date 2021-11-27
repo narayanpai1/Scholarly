@@ -1,7 +1,4 @@
 import React from 'react';
-import auth from '../services/authService';
-import Logo from './util/Logo';
-import DrawerBar from './util/DrawerBar';
 
 import { makeStyles } from '@mui/styles';
 import AppBar from '@mui/material/AppBar';
@@ -10,14 +7,13 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-
 import CssBaseline from '@mui/material/CssBaseline';
-
 import { useHistory } from 'react-router-dom';
-
 import Button from '@mui/material/Button';
+
+import auth from '../services/authService';
+import Logo from './util/Logo';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -41,7 +37,12 @@ const useStyles = makeStyles((theme) => ({
   newCourseButton: { float: 'right' },
 }));
 
-function Dashboard(props) {
+/***
+ * The top navigation bar used in all pages of the app.
+ * 
+ * It shows the home page link and the current logged in user, if any.
+ */
+function NavigBar() {
   let history = useHistory();
   const isAuthenticated = auth.isAuthenticated();
   const classes = useStyles();
@@ -110,7 +111,7 @@ function Dashboard(props) {
               onClick={handleAccountMenuOpen}
             >
               <div className={classes.accountName}>{user && user.name}</div>
-              <AccountCircle />
+              <img src={user.image} style={{margin:'0vw 4px', width:'25px'}}/>
             </IconButton>
           )}
           {!isAuthenticated && (
@@ -125,4 +126,4 @@ function Dashboard(props) {
   );
 }
 
-export default Dashboard;
+export default NavigBar;

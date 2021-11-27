@@ -1,40 +1,29 @@
 import React from 'react';
 
-import { Grid } from '@mui/material';
-
-import { Paper, Typography } from '@mui/material';
-
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 import formService from '../../services/formService';
-import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import RadioGroup from '@mui/material/RadioGroup';
 import Divider from '@mui/material/Divider';
-import { makeStyles } from '@mui/styles';
-
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
-import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
-import Moment from 'react-moment';
-import NavigBar from '../NavigBar';
 import Snackbar from '@mui/material/Snackbar';
 
-const useStyles = makeStyles((theme) => ({}));
 
+/***
+ * The component shown when the user is responding to the test.
+ * 
+ * It lets the user select different options and submit the test.
+ * On submitting the test, the same component shows a success page.
+ */
 function Responding(props) {
-  const classes = useStyles();
   let { formData } = props;
   const [responseData, setResponseData] = React.useState([]);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [timeRemaining, setTimeRemaining] = React.useState('');
-  const [sendingResponse, setSendingResponse] = React.useState(true);
+  const [sendingResponse, setSendingResponse] = React.useState(false);
   const [timedOut, setTimedOut] = React.useState(false);
 
   const handleRadioChange = (j, i) => {
@@ -111,7 +100,6 @@ function Responding(props) {
   }, [formData]);
 
   function submitResponse() {
-    setSendingResponse(true);
     console.log(responseData);
     var submissionData = {
       formId: formData._id,
@@ -129,14 +117,20 @@ function Responding(props) {
           (error.response && error.response.data && error.response.data.message) ||
           error.message ||
           error.toString();
-        console.log(resMessage);
+        console.log(error.message);
+
+        // if the message says something like a teacher cannot submit a response
+        // redirect to error page
+        if(resMessage.includes('teacher')){
+          window.location.replace('/forbidden');
+        }
       },
     );
   }
 
   React.useEffect(() =>{
-    if(sendingResponse === true);
-    // submitResponse();
+    if(sendingResponse === true)
+      submitResponse();
   },[sendingResponse]);
 
   function isMarkedOption(i, optionId) {

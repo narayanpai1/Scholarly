@@ -1,17 +1,26 @@
 const CourseModel = require('../db/Course');
-const UserModel = require('../db/User');
 const FormModel = require('../db/Form');
 
 var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
+  /***
+   * A service to create a new course.
+   * Should be only requested by a teacher.
+   * Else sends an error.
+   */
   createCourse: async (req, res) => {
     try {
+      if(req.user.isStudent){
+        throw 'Not authorized';
+      }
+
       var data = {
         createdBy: req.user._id,
         name: req.body.name,
         description: req.body.description,
       };
+
 
       if (req.body.url != '') {
         data.url = req.body.url;
@@ -21,7 +30,7 @@ module.exports = {
         res.status(200).json(docs);
       });
     } catch (error) {
-      res.send(error);
+      res.status(409).send(error);
     }
   },
 
@@ -42,16 +51,8 @@ module.exports = {
   },
 
   getAllCourses: async (req, res) => {
-    var filters = {};
-
-    if (req.query.created === 'true') {
-      filters = {
-        createdBy: req.user._id,
-      };
-    }
-
     try {
-      await CourseModel.find(filters).then(async (courses) => {
+      await CourseModel.find().then(async (courses) => {
         return res.status(200).json(courses);
       });
     } catch (err) {
@@ -59,6 +60,12 @@ module.exports = {
     }
   },
 
+  /***
+   * Deletes the course of given id.
+   * 
+   * If the requested user is not the owner of the course,
+   * sends error message.
+   */
   deleteCourse: async (req, res) => {
     try {
       var courseId = req.params.courseId;
@@ -85,6 +92,10 @@ module.exports = {
     }
   },
 
+
+  /***
+   * Gets different tests of the course of given id.
+   */
   getAllFormsOfCourse: async (req, res) => {
     try {
       var courseId = req.params.courseId;

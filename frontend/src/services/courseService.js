@@ -2,6 +2,11 @@ import axios from 'axios';
 import authService from './authService';
 import baseAPIService from './baseAPIService';
 
+/***
+ * Lets you perform different operations related to courses
+ * 
+ * Sends requests to api/course if needed.
+ */
 class courseService extends baseAPIService {
   constructor() {
     super('/course');

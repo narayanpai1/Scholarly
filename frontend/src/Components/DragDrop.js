@@ -1,21 +1,13 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
+
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+/***
+ * A component that allows reordering the content.
+ * 
+ * For eg, it is used in reordering different questions.
+ */
 export default function DragAndDrop() {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     items: [ {id: "item-0", content: "item 0"},
-  //     {id: "item-1", content: "item 1"}
-  //     ,{id: "item-2", content: "item 2"}
-  //     ,{id: "item-3", content: "item 3"}
-  //     ,{id: "item-4", content: "item 4"}]
-  //   };
-
-  //   this.onDragEnd = this.onDragEnd.bind(this);
-  // }
-
   const [items, setItems] = React.useState([
     { id: 'item-0', content: 'item 0' },
     { id: 'item-1', content: 'item 1' },
@@ -43,11 +35,11 @@ export default function DragAndDrop() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
+        {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {items.map((item, index) => (
               <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(provided, snapshot) => (
+                {(provided) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}

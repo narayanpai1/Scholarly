@@ -2,6 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 
+
+/***
+ * The component to emulate different tabs.
+ * It is a simple div that shows the content only when the tab value and index match
+ */
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 

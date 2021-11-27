@@ -1,48 +1,33 @@
 import * as React from 'react';
 
-import Forms from '../Form/Forms';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { makeStyles } from '@mui/styles';
-
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
+import DateAdapter from '@mui/lab/AdapterMoment';
+import { useHistory} from 'react-router-dom';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Snackbar from '@mui/material/Snackbar';
 
 import formService from '../../services/formService';
 import courseService from '../../services/courseService';
 import NavigBar from '../NavigBar';
 import auth from '../../services/authService';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-// import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
-import DateAdapter from '@mui/lab/AdapterMoment';
-import { useHistory, Redirect } from 'react-router-dom';
-
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import RadioGroup from '@mui/material/RadioGroup';
-import Divider from '@mui/material/Divider';
-
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
-import FormHelperText from '@mui/material/FormHelperText';
-import Checkbox from '@mui/material/Checkbox';
-
+import Forms from '../Form/Forms';
 import CustomTabs from '../util/CustomTabs';
 import TabPanel from '../util/TabPanel';
 import meetingService from '../../services/meetingService';
 import Meetings from './Meetings';
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   courseContentRoot: {
     padding: '3vw',
   },
@@ -65,14 +50,19 @@ const useStyles = makeStyles((theme) => ({
   newFormButton: { float: 'right' },
 }));
 
+/***
+ * The course tab of the dashboard.
+ * 
+ * Shows different courses present.
+ */
 function CourseView(props) {
   let classes = useStyles();
   let history = useHistory();
   let user = auth.getCurrentUser();
+
   const [open, setOpen] = React.useState(false);
   const courseId = props.match.params.courseId;
   const [course, setCourse] = React.useState({});
-
   const [formTitle, setFormTitle] = React.useState('');
   const [formDescription, setFormDescription] = React.useState('');
   const [formStartTime, setFormStartTime] = React.useState(new Date());
@@ -83,11 +73,12 @@ function CourseView(props) {
   const [classRecord, setClassRecord] = React.useState(true);
   const [classNameHelper, setClassNameHelper] = React.useState(null);
 
+  // to indicate 'Redirecting to meeting' message
+  const [toastMessage, setToastMessage] = React.useState(null);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
-
 
   React.useEffect(() => {
     if (!courseId) {
@@ -109,14 +100,23 @@ function CourseView(props) {
     );
   }, [courseId]);
 
+  /***
+   * Opens the form for meeting/test creation
+   */
   const handleClickOpen = () => {
     setOpen(true);
   };
 
+  /***
+   * Closes the form for meeting/test creation
+   */
   const handleClose = () => {
     setOpen(false);
   };
 
+  /***
+   * Closes and resets the form for test creation
+   */
   const cancelAddForm = () => {
     handleClose();
     setFormTitle('');
@@ -124,6 +124,9 @@ function CourseView(props) {
     setFormNameHelper(null);
   };
 
+  /***
+   * Closes and resets the form for test creation
+   */
   const cancelAddMeeting = () => {
     handleClose();
     setClassTitle('');
@@ -132,7 +135,6 @@ function CourseView(props) {
   };
 
   const handleFormStartTimeChange = (newValue) => {
-    console.log(newValue);
     setFormStartTime(newValue);
   };
 
@@ -140,11 +142,15 @@ function CourseView(props) {
     setFormEndTime(newValue);
   };
 
+  /***
+   * Creates a new meeting with the help of meeting service
+   * Also validates the form
+   */
   const createMeeting = () => {
     var data = {
       name: classTitle,
-      course:course._id,
-      record: classRecord
+      course: course._id,
+      record: classRecord,
     };
     setClassNameHelper(null);
 
@@ -155,6 +161,8 @@ function CourseView(props) {
 
     meetingService.add(data).then(
       (result) => {
+        handleClose();
+        setToastMessage('Redirecting to the meeting');
         window.location.replace(result.link);
       },
 
@@ -168,6 +176,10 @@ function CourseView(props) {
     );
   };
 
+  /***
+   * Creates a new form with the help of form service
+   * Also validates the form and sets error-helpers if required
+   */
   const createCourse = () => {
     var data = {
       name: formTitle,
@@ -178,7 +190,7 @@ function CourseView(props) {
     };
     setFormNameHelper(null);
 
-    if (data.name === ''){
+    if (data.name === '') {
       setFormNameHelper('Test Name is mandatory');
       return;
     }
@@ -190,9 +202,9 @@ function CourseView(props) {
 
       (error) => {
         const resMessage =
-              (error.response && error.response.data && error.response.data.message) ||
-              error.message ||
-              error.toString();
+          (error.response && error.response.data && error.response.data.message) ||
+          error.message ||
+          error.toString();
         console.log(resMessage);
       },
     );
@@ -201,6 +213,16 @@ function CourseView(props) {
   return (
     <>
       <NavigBar />
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={Boolean(toastMessage)}
+        message={toastMessage}
+        sx={{
+          '.MuiSnackbarContent-root': {
+            fontSize: '18px',
+          },
+        }}
+      />
       <div className={classes.courseRoot}>
         <Grid container spacing={2} className={classes.coverSection}>
           <Grid item xs={12} sm={3}>

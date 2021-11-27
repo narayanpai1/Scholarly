@@ -1,35 +1,22 @@
 import React from 'react';
 
-import { Grid } from '@mui/material';
-
-import { Paper, Typography } from '@mui/material';
-
-import formService from '../../services/formService';
-import CircularProgress from '@mui/material/CircularProgress';
+import Grid  from '@mui/material/Grid';
+import Typography  from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import RadioGroup from '@mui/material/RadioGroup';
 import Divider from '@mui/material/Divider';
-import { makeStyles } from '@mui/styles';
-
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
-import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Box from '@mui/material/Box';
-import NavigBar from '../NavigBar';
 
-const useStyles = makeStyles((theme) => ({}));
 
+/***
+ * The component shown when the user has already responded to the test.
+ * 
+ * It shows the users response along with the scores and correct options for each of the question.
+ */
 function Responded(props) {
-  const classes = useStyles();
   let { formData, responseData } = props;
   const [maxMarks, setMaxMarks] = React.useState(null);
   const [totalObtainedMarks, setTotalObtainedMarks] = React.useState(null);

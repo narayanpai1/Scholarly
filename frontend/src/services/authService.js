@@ -2,6 +2,11 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 const API_URL = process.env.REACT_APP_BACKEND_URL + '/api/user/';
 
+/***
+ * Different operations related to authentication, creating an account etc.
+ * 
+ * Sends requests to api/user if needed.
+ */
 var authService = {
   isAuthenticated() {
     const token = localStorage.getItem('userTicket');
@@ -51,6 +56,10 @@ var authService = {
       email: res.profileObj.email,
       image: res.profileObj.imageUrl,
     };
+
+    if(!res.profileObj.imageUrl){
+      data.image=res.profileObj.image;
+    }
 
     if (res.isStudent !== undefined) {
       data.isStudent = res.isStudent;

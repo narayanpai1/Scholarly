@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-
+  workflow_dispatch:
+  
 jobs:
   run-lint-tests:
     runs-on: ubuntu-latest
@@ -19,7 +20,7 @@ jobs:
         run: |
           cd frontend
           npm install
-          cd server
+          cd ../server
           npm install
       - name: frontend lint test
         run: |
@@ -27,7 +28,7 @@ jobs:
           npm run lint
       - name: backend lint test
         run: |
-          cd web
+          cd server
           npm run lint
 
   run-api-tests:
@@ -43,13 +44,30 @@ jobs:
         run: |
           cd frontend
           npm install
-          cd server
+          cd ../server
           npm install
           npm install -g newman
       - name: run the server
         run: |
           cd server
           npm start &
+        env:
+          DATABASE_CLIENT_URL: ${{ secrets.DATABASE_CLIENT_URL }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
+          BBB_URL: ${{ secrets.BBB_URL }}
+          BBB_SECRET: ${{ secrets.BBB_SECRET }}
       - name: api tests
         run: |
           newman run ./tests/scholarly.postman_collection.json
+  
+  push-to-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+      - name: Push
+        run: |
+          git checkout -b deploy
+          git push origin deploy

@@ -9,8 +9,12 @@ import Grid from '@mui/material/Grid';
 
 import auth from '../../services/authService';
 
+/***
+ * A card containing different details of the course.
+ * To be shown in the dashboard
+ */
 function CourseCard(props) {
-  let { type, course, user, setUser } = props;
+  let { tabNumber, course, user, setUser } = props;
   const [showCourse, setShowCourse] = React.useState(false);
 
   React.useEffect(() => {
@@ -20,17 +24,23 @@ function CourseCard(props) {
 
     console.log('Enrolled courses', user);
 
-    if (type === 1 && user.isStudent === true && user.enrolledCourses.includes(course._id)) {
+    // Set the visibility of the course based on the tab and tabNumber of student
+    // tabNumber = 2 equals 'managed courses' for teachers
+    // and it equals 'enrolled courses' for students
+    if (tabNumber === 1 && user.isStudent === true && user.enrolledCourses.includes(course._id)) {
       setShowCourse(true);
-    } else if (type === 0) {
+    } else if (tabNumber === 0) {
       setShowCourse(true);
-    } else if (type === 1 && user.isStudent === false && course.createdBy === user._id) {
+    } else if (tabNumber === 1 && user.isStudent === false && course.createdBy === user._id) {
       setShowCourse(true);
     } else {
       setShowCourse(false);
     }
-  }, [user, course, type]);
+  }, [user, course, tabNumber]);
 
+  /***
+   * Update the user through the API to add the enrolled course
+   */
   const enrollCourse = () => {
     try {
       let user_copy = Object.assign({}, user);
@@ -44,6 +54,7 @@ function CourseCard(props) {
     }
   };
 
+  // if the visibility set to false, dont show anything
   return showCourse ? (
     <Grid item xs={12} sm={6} md={3}>
       <Card sx={{ maxWidth: 345 }}>
