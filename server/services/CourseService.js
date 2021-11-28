@@ -11,7 +11,7 @@ module.exports = {
    */
   createCourse: async (req, res) => {
     try {
-      if(req.user.isStudent){
+      if(req.user.isStudent===true){
         throw 'Not authorized';
       }
 

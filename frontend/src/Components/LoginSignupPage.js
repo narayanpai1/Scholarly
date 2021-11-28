@@ -286,7 +286,7 @@ function SignUpForm(props) {
           </Grid>
         </Grid>
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-          Sign Up
+          Sign Up and Enter!
         </Button>
         <Grid container justifyContent="flex-end">
           <Grid item>

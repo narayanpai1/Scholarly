@@ -107,10 +107,9 @@ module.exports = {
         startTime: req.body.startTime,
         endTime: req.body.endTime,
       };
-      console.log('wfwefw');
 
       await checkAuthorization(req);
-      console.log('wfwefw');
+
       FormModel.findByIdAndUpdate(formId, data, { new: true }, (err, result) => {
         console.log(err);
         if (err) {

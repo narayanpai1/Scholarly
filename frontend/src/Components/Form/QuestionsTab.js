@@ -72,7 +72,7 @@ function QuestionsTab(props) {
   function saveQuestions() {
     setToastMessage('Saving your questions...');
     var data = {
-      formId: formData._id,
+      _id: formData._id,
       name: formData.name,
       description: formData.description,
       questions: questions,

@@ -72,12 +72,14 @@ function CourseView(props) {
   const [classTitle, setClassTitle] = React.useState('');
   const [classRecord, setClassRecord] = React.useState(true);
   const [classNameHelper, setClassNameHelper] = React.useState(null);
+  const [isEmpty, setIsEmpty] = React.useState(false);
 
   // to indicate 'Redirecting to meeting' message
   const [toastMessage, setToastMessage] = React.useState(null);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    setIsEmpty(false);
   };
 
   React.useEffect(() => {
@@ -255,10 +257,10 @@ function CourseView(props) {
             </Button>
           )}
           <TabPanel index={0} value={tabValue}>
-            <Forms course={course} />
+            <Forms course={course} setIsEmpty={setIsEmpty} />
           </TabPanel>
-          <TabPanel index={1} value={tabValue}>
-            <Meetings course={course} />
+          <TabPanel index={1} value={tabValue} setIsEmpty={setIsEmpty}>
+            <Meetings course={course} setIsEmpty={setIsEmpty} />
           </TabPanel>
           <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Create a new Test</DialogTitle>
@@ -325,7 +327,7 @@ function CourseView(props) {
             </TabPanel>
 
             <TabPanel index={1} value={tabValue}>
-              <DialogContent >
+              <DialogContent>
                 <TextField
                   autoFocus
                   margin="dense"
@@ -366,6 +368,11 @@ function CourseView(props) {
             </TabPanel>
           </Dialog>
         </div>
+        {isEmpty===true && (
+          <h3 style={{ marginTop: '70px' }}>
+            There are no {tabValue == 0 ? <>tests</> : <>classes</>} in the course yet!
+          </h3>
+        )}
       </div>
     </>
   );

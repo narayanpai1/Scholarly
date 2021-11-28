@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
  * Lists different tests/forms present in the course with multiple `OneForm` components
  */
 function Forms(props) {
-  let { course } = props;
+  let { course, setIsEmpty } = props;
   const classes = useStyles();
   const [forms, setForms] = React.useState([]);
   const [loadingForms, setLoadingForms] = React.useState(true);
@@ -41,6 +41,7 @@ function Forms(props) {
       (forms) => {
         setForms(forms);
         setLoadingForms(false);
+        if(forms && forms.length===0)  setIsEmpty(true);
       },
 
       (error) => {
@@ -52,6 +53,11 @@ function Forms(props) {
       },
     );
   }, [course]);
+
+  React.useEffect(()=>{
+    if(forms && forms.length>0)
+      setIsEmpty(false);
+  }, [forms]);
 
   React.useEffect(() => {
     setUser(auth.getCurrentUser());

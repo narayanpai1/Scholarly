@@ -35,7 +35,7 @@ function getRandomInt(max) {
  * The meetings tab of the course
  */
 function Meetings(props) {
-  let { course } = props;
+  let { course, setIsEmpty } = props;
   const classes = useStyles();
   const [meetings, setMeetings] = React.useState(null);
   const [loadingForms, setLoadingForms] = React.useState(true);
@@ -47,6 +47,7 @@ function Meetings(props) {
     meetingService.getAllMeetingsOfCourse(course._id).then(
       (meetings) => {
         setMeetings(meetings);
+        if(meetings && (meetings.length===0)) setIsEmpty(true);
         setLoadingForms(false);
       }
       ,
@@ -59,6 +60,11 @@ function Meetings(props) {
       },
     );
   }, [course]);
+
+  React.useEffect(()=>{
+    if(meetings && meetings.length>0)
+      setIsEmpty(false);
+  }, [meetings]);
 
   return (
     <div>
