@@ -58,11 +58,11 @@ function Responding(props) {
       let dt1 = new Date();
       let dt2 = new Date(formData.endTime);
 
-      let diff = (dt2.getTime() - (dt1.getTime()+initialServerClientTimeDifference)) / 1000;
+      let diff = (dt2.getTime() - (dt1.getTime())) / 1000;
 
       // update the server time based on initial difference
       // we cant keep fetching the server time
-      let serverTime = new Date(dt1.getTime() + initialServerClientTimeDifference);
+      let serverTime = new Date(dt1.getTime());
       serverTime = serverTime.toLocaleTimeString('en-US', { timeZoneName: 'short' });
       setServerTime(serverTime);
 

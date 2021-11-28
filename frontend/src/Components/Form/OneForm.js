@@ -42,6 +42,7 @@ export default function OneForm(props) {
   const [disabled, setDisabled] = React.useState(null);
 
   React.useEffect(() => {
+    console.log(formData);
     if (!courseLinkPrefix || !formData) return;
 
     if (courseLinkPrefix === '/s') {

@@ -190,6 +190,8 @@ function CourseView(props) {
       startTime: formStartTime.toJSON(),
       endTime: formEndTime.toJSON(),
     };
+
+    console.log(data);
     setFormNameHelper(null);
 
     if (data.name === '') {
