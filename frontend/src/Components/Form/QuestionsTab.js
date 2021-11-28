@@ -75,6 +75,8 @@ function QuestionsTab(props) {
       _id: formData._id,
       name: formData.name,
       description: formData.description,
+      startTime: formData.startTime,
+      endTime:formData.endTime,
       questions: questions,
     };
 
