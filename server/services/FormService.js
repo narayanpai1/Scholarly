@@ -64,6 +64,10 @@ module.exports = {
           });
           form.totalMarks = totalMarks;
 
+          // send the current server time as we validate the time left by the server time
+          // and not the client time
+          form.currentServerTime = new Date();
+
           res.status(200).json(form);
         }
       });
@@ -100,6 +104,8 @@ module.exports = {
         name: req.body.name,
         description: req.body.description,
         questions: req.body.questions,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
       };
       console.log('wfwefw');
 
@@ -121,14 +127,25 @@ module.exports = {
 
   submitResponse: async (req, res) => {
     try {
-      let oldResponses = await ResponseModel.find({formId:req.body.formId, userId:req.user._id});
-      
+      let oldResponses = await ResponseModel.find({
+        formId: req.body.formId,
+        userId: req.user._id,
+      });
+
       // not an error since a user might sometimes click on submit button multiple times
-      if(oldResponses.length>0)
-        return res.status(200).json({message:'Already submitted'});
-      
-      if(!req.user.isStudent)
-        throw 'A teacher cannot attempt a test';
+      if (oldResponses.length > 0) return res.status(200).json({ message: 'Already submitted' });
+
+      if (!req.user.isStudent) throw 'A teacher cannot attempt a test';
+
+      let form = await FormModel.findOne({ _id: req.body.formId });
+
+      let currentTime = new Date(),
+        endTime = new Date(form.endTime);
+
+      // 20 seconds buffer for time taken for network call, reading database etc
+      if (currentTime.getTime() > endTime.getTime() + 20) {
+        throw 'Late submission';
+      }
 
       var data = {
         formId: req.body.formId,

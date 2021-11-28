@@ -263,7 +263,7 @@ function CourseView(props) {
           <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Create a new Test</DialogTitle>
             <TabPanel index={0} value={tabValue}>
-              <DialogContent fullWidth>
+              <DialogContent>
                 <TextField
                   autoFocus
                   margin="dense"
@@ -325,7 +325,7 @@ function CourseView(props) {
             </TabPanel>
 
             <TabPanel index={1} value={tabValue}>
-              <DialogContent fullWidth>
+              <DialogContent >
                 <TextField
                   autoFocus
                   margin="dense"

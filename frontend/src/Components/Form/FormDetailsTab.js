@@ -39,13 +39,14 @@ export default function FormDetailsTab(props){
 
   const updateForm = () => {
     if(!formData)   return;
+
     var data = {
       _id: formData._id,
       name: formTitle,
       description: formDescription,
       course: formData.course,
-      startTime: formStartTime.toJSON(),
-      endTime: formEndTime.toJSON(),
+      startTime: formStartTime,
+      endTime: formEndTime,
       questions: formData.questions
     };
 
@@ -84,11 +85,13 @@ export default function FormDetailsTab(props){
   };
 
   const handleFormStartTimeChange = (newValue) => {
-    setFormStartTime(newValue);
+    setFormStartTime(newValue.toJSON());
   };
 
   const handleFormEndTimeChange = (newValue) => {
-    setFormEndTime(newValue);
+    console.log(newValue, 'frfe');
+    console.log(newValue.toJSON());
+    setFormEndTime(newValue.toJSON());
   };
 
   return (

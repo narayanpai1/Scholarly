@@ -170,7 +170,7 @@ function Dashboard() {
 
       <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Create a new Course</DialogTitle>
-        <DialogContent fullWidth>
+        <DialogContent>
           <TextField
             autoFocus
             margin="dense"

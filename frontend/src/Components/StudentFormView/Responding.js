@@ -25,6 +25,7 @@ function Responding(props) {
   const [timeRemaining, setTimeRemaining] = React.useState('');
   const [sendingResponse, setSendingResponse] = React.useState(false);
   const [timedOut, setTimedOut] = React.useState(false);
+  const [serverTime,setServerTime] = React.useState(null);
 
   const handleRadioChange = (j, i) => {
     var optionId = j;
@@ -44,14 +45,30 @@ function Responding(props) {
 
     var responseDataTemp = [];
 
+    // calculate the initial difference between the server and the client
+    // so that we can use the client time from here on
+    // If the client updates the time while giving a test, not our fault :(
+    let serverTime = new Date(formData.currentServerTime),
+      clientTime = new Date(),
+      initialServerClientTimeDifference = (serverTime.getTime() - clientTime.getTime());
+    console.log(formData.currentServerTime);
+    console.log(initialServerClientTimeDifference);
+
     var timeRefresh = setInterval(async () => {
       let dt1 = new Date();
       let dt2 = new Date(formData.endTime);
 
-      let diff = (dt2.getTime() - dt1.getTime()) / 1000;
-      // let diff = 0;
+      let diff = (dt2.getTime() - (dt1.getTime()+initialServerClientTimeDifference)) / 1000;
+
+      // update the server time based on initial difference
+      // we cant keep fetching the server time
+      let serverTime = new Date(dt1.getTime() + initialServerClientTimeDifference);
+      serverTime = serverTime.toLocaleTimeString('en-US', { timeZoneName: 'short' });
+      setServerTime(serverTime);
+
       if (diff < -5) {
         setTimeRemaining('Time Over');
+        setServerTime(null);
         setTimedOut(true);
         return;
       }
@@ -101,7 +118,7 @@ function Responding(props) {
       formId: formData._id,
       response: responseData,
     };
-
+    
     formService.submitResponse(submissionData).then(
       () => {
         setIsSubmitted(true);
@@ -112,7 +129,7 @@ function Responding(props) {
           error.message ||
           error.toString();
         console.log(error.message);
-
+        setIsSubmitted(true);
         // if the message says something like a teacher cannot submit a response
         // redirect to error page
         if(resMessage.includes('teacher')){
@@ -159,8 +176,11 @@ function Responding(props) {
               borderRadius: '4px',
               padding: '2px 10px',
               backgroundColor: '#d9d9d9',
+              textAlign:'left'
             }}
           >
+            Server Time: {serverTime}
+            <br/>
             {timeRemaining}
           </div>
         )}
@@ -176,7 +196,7 @@ function Responding(props) {
           },
         }}
       />
-      <Grid>
+      <Grid sx={{margin:'20px'}}>
         {formData.questions.map((ques, i) => (
           <div key={i}>
             <br></br>
@@ -252,16 +272,12 @@ function Responding(props) {
             </Paper>
           </div>
         ))}
-      </Grid>
-      <Grid>
         <br></br>
         <div style={{ display: 'flex' }}>
           <Button variant="contained" color="primary" onClick={submitResponse}>
             Submit
           </Button>
         </div>
-        <br></br>
-
         <br></br>
       </Grid>
     </div>

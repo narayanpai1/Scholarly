@@ -12,7 +12,7 @@ export default function Forbidden(){
         <br/>
         <img src="/lock.png" style={{maxWidth:'40%'}}/>
         <br/>
-        <h1>Access to this content is restricted :\</h1>
+        <h1>Access to this content is restricted or the operation was unauthorized:\</h1>
       </div>
     </>
   );

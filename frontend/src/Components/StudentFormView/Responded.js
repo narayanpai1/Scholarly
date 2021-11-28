@@ -8,7 +8,7 @@ import Divider from '@mui/material/Divider';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Box from '@mui/material/Box';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 /***
  * The component shown when the user has already responded to the test.
@@ -135,6 +135,7 @@ function Responded(props) {
                         <br />
                         Secured Marks: {perQuestionData[i].marksObtained.toPrecision(2)}
                         <br />
+                        Expected Answers: {perQuestionData[i].correctOptions}
                       </div>
                     )}
                     <FormGroup>
@@ -144,29 +145,35 @@ function Responded(props) {
                             <FormControlLabel
                               disabled
                               control={
-                                <Checkbox
-                                  checked={
-                                    perQuestionData !== null &&
-                                    perQuestionData[i].markedOptions.includes(
-                                      String.fromCharCode('A'.charCodeAt(0) + j),
-                                    )
-                                  }
-                                  value={op._id}
-                                />
+                                <>
+                                  <Checkbox
+                                    checked={
+                                      perQuestionData !== null &&
+                                      perQuestionData[i].markedOptions.includes(
+                                        String.fromCharCode('A'.charCodeAt(0) + j),
+                                      )
+                                    }
+                                    disabled
+                                    value={op._id}
+                                  />
+                                </>
                               }
                               label={
                                 String.fromCharCode('A'.charCodeAt(0) + j) + '. ' + op.optionText
                               }
                             />
-                            {perQuestionData !== null &&
-                              perQuestionData[i].correctOptions.includes(
-                                String.fromCharCode('A'.charCodeAt(0) + j),
-                              ) && (
-                              <Box sx={{ color: 'green', fontSize: '13px' }}>
-                                <CheckCircleIcon fontSize="small" sx={{ marginTop: '10px' }} />
-                                  Expected Answer
-                              </Box>
-                            )}
+                            {
+                              perQuestionData !== null &&
+                              perQuestionData[i].markedOptions.includes(String.fromCharCode('A'.charCodeAt(0) + j)) && 
+                              (
+                                <>{
+                                  perQuestionData[i].correctOptions.includes(String.fromCharCode('A'.charCodeAt(0) + j))?
+                                    (<CheckCircleIcon fontSize="small" sx={{ color: 'green', fontSize: '17px', marginTop: '10px' }} />):
+                                    (<CancelIcon fontSize="small" sx={{ color: 'red', fontSize: '17px',marginTop: '10px' }} />)
+                                }
+                                </>
+                              )
+                            }
                           </div>
 
                           <div style={{ display: 'flex' }}>

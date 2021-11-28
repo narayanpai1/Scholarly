@@ -83,7 +83,11 @@ export default function OneForm(props) {
     <Grid item xs={12} sm={6} md={3}>
       <Card className={classes.root}>
         <CardActionArea>
-          <CardMedia className={classes.media} sx={{height:'40px'}} image={'/course-' + getRandomInt(5) + '.jpg'} />
+          <CardMedia
+            className={classes.media}
+            sx={{ height: '40px' }}
+            image={'/course-' + getRandomInt(5) + '.jpg'}
+          />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {formData.name}
@@ -107,7 +111,7 @@ export default function OneForm(props) {
               variant="body2"
               color="textSecondary"
               component="p"
-              sx={{ textAlign: 'left', marginTop: '5px' }}
+              sx={{ textAlign: 'left', marginTop: '5px', lineHeight: '1.5em', minHeight: '7.5em' }}
             >
               {courseLinkPrefix === '/form' && (
                 <>
@@ -115,11 +119,23 @@ export default function OneForm(props) {
                   <br />
                 </>
               )}
-              {formData.totalMarks && <><b>Maximum Marks:</b> {formData.totalMarks}</>}
-              <br/>
-              {formData.startTime && <><b>Starts at:</b> {getDateString(formData.startTime)}</>}
+              {formData.totalMarks && (
+                <>
+                  <b>Maximum Marks:</b> {formData.totalMarks}
+                </>
+              )}
               <br />
-              {formData.endTime && <><b> Ends at:</b> {getDateString(formData.endTime)}</>}
+              {formData.startTime && (
+                <>
+                  <b>Starts at:</b> {getDateString(formData.startTime)}
+                </>
+              )}
+              <br />
+              {formData.endTime && (
+                <>
+                  <b> Ends at:</b> {getDateString(formData.endTime)}
+                </>
+              )}
               <br />
 
               {disabled === false && (
